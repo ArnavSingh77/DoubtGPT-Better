@@ -6,7 +6,6 @@ import "katex/dist/katex.min.css";
 import { cn } from "@/lib/utils";
 import { Mic } from "lucide-react";
 import { Button } from "./ui/button";
-import { Components } from "react-markdown";
 
 interface ChatMessageProps {
   content: string;
@@ -33,23 +32,6 @@ export const ChatMessage = ({ content, isUser }: ChatMessageProps) => {
     recognition.start();
   };
 
-  const components: Components = {
-    code({ className, children, ...props }) {
-      const match = /language-(\w+)/.exec(className || '');
-      return !props.inline ? (
-        <pre className="bg-black/10 p-2 rounded">
-          <code className={className} {...props}>
-            {children}
-          </code>
-        </pre>
-      ) : (
-        <code className={className} {...props}>
-          {children}
-        </code>
-      );
-    }
-  };
-
   return (
     <div
       className={cn(
@@ -68,7 +50,22 @@ export const ChatMessage = ({ content, isUser }: ChatMessageProps) => {
         <ReactMarkdown
           remarkPlugins={[remarkMath]}
           rehypePlugins={[rehypeKatex]}
-          components={components}
+          components={{
+            code({ node, inline, className, children, ...props }) {
+              const match = /language-(\w+)/.exec(className || '');
+              return !inline ? (
+                <pre className="bg-black/10 p-2 rounded">
+                  <code className={className} {...props}>
+                    {children}
+                  </code>
+                </pre>
+              ) : (
+                <code className={className} {...props}>
+                  {children}
+                </code>
+              );
+            }
+          }}
         >
           {content}
         </ReactMarkdown>
