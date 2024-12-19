@@ -36,7 +36,7 @@ export const SearchBar = ({ onSubmit }: SearchBarProps) => {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
-        <div className="absolute right-2 flex gap-2 items-center">
+        <div className="absolute right-2 flex gap-2">
           <input
             type="file"
             id="image-upload"
