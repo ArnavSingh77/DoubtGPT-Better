@@ -6,7 +6,7 @@
 
 @layer base {
   :root {
-    --background: 30 33% 94%;
+    --background: 158 33% 94%;
     --foreground: 222.2 84% 4.9%;
 
     --card: 0 0% 100%;
@@ -15,24 +15,24 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 24 64% 32%;
+    --primary: 158 64% 32%;
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 24 30% 96%;
+    --secondary: 158 30% 96%;
     --secondary-foreground: 222.2 47.4% 11.2%;
 
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 24 54% 40%;
+    --accent: 158 54% 40%;
     --accent-foreground: 222.2 47.4% 11.2%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 24 30% 90%;
-    --input: 24 30% 90%;
-    --ring: 24 64% 32%;
+    --border: 158 30% 90%;
+    --input: 158 30% 90%;
+    --ring: 158 64% 32%;
 
     --radius: 0.75rem;
   }
@@ -63,12 +63,6 @@
   @apply w-full max-w-2xl mx-auto mt-8 mb-12;
 }
 
-/* Update Index page container padding */
-.container {
-  @apply pb-24 !important;
-}
-
-/* Add bottom decoration */
-.bottom-decoration {
-  @apply w-full h-24 bg-gradient-to-t from-primary/5 to-transparent;
+.recent-queries {
+  @apply flex flex-wrap gap-2 justify-center mt-4;
 }

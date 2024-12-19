@@ -27,8 +27,8 @@ export const ChatInterface = () => {
       setMessages((prev) => [...prev, { content: query, isUser: true }]);
 
       // Initialize Gemini API with a placeholder - you'll need to set this up securely
-      const genAI = new GoogleGenerativeAI("AIzaSyBqvDih8yCI-jhE2HNkbBdMkaKxXIxT3eA");
-      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
+      const genAI = new GoogleGenerativeAI("YOUR-API-KEY");
+      const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
       const result = await model.generateContent(query);
       const response = await result.response;
