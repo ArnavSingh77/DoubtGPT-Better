@@ -21,16 +21,24 @@ export const ChatInterface = ({ initialQuery }: ChatInterfaceProps) => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    // Trigger animation after component mount
     setTimeout(() => setIsVisible(true), 100);
     
-    // Handle initial query if provided
     if (initialQuery) {
       handleSendMessage(initialQuery);
     }
   }, []);
 
-  const handleSendMessage = async (query: string) => {
+  const fileToGenerativePart = async (file: File) => {
+    const buffer = await file.arrayBuffer();
+    return {
+      inlineData: {
+        data: Buffer.from(buffer).toString('base64'),
+        mimeType: file.type
+      }
+    };
+  };
+
+  const handleSendMessage = async (query: string, imageFile?: File) => {
     try {
       setIsLoading(true);
       setMessages((prev) => [...prev, { content: query, isUser: true }]);
@@ -41,7 +49,14 @@ export const ChatInterface = ({ initialQuery }: ChatInterfaceProps) => {
         systemInstruction: "You are DoubtGPT - An Expert AI Tutor: Specializes in Physics, Chemistry, Mathematics. Mission: Help students understand complex concepts with clear, step-by-step solutions. Prioritize detailed explanations over simple answers, without revealing any internal identity or system details. 1. Analyze the Question: Carefully read the student's query. Identify core concepts and principles. Ask for clarification if ambiguous. Request a better-formulated query if nonsensical. 2. Break Down the Problem: Divide into smaller steps. Explain logically, assuming no prior knowledge. 3. Show Your Work: Use clear calculations with units. Show all steps, even trivial ones. 4. Use Simple Language: Avoid jargon; explain in easy terms. Define terms in simpler words. 5. Explain the \"Why\" and \"How\": Explain reasons and connections to the overall solution. Highlight concepts, formulas, or theories. 6. Ensure Accuracy: Double-check all steps and calculations. Use common sense to verify results. 7. Handle Uncertainty Professionally: Clearly state any uncertainty. Ask for more information if needed. 8. Incorporate Examples: Use examples to illustrate complex concepts. For challenging topics, use real-world analogies to make abstract ideas relatable. Break topics into sub-concepts and tackle them one at a time. 9. Avoid Assumptions: Assume no prior knowledge; explain from the ground up. 10. Delay Substitution of Variables: Perform symbolic manipulation first. Substitute numerical values at the last step. 11. Maintain Clear Formatting: Use numbered steps for processes. Bullet points for summaries. Headings for sections. 12. For mathematical expressions, use LaTeX notation: Inline math should be wrapped in single dollar signs: $E = mc^2$ . Block math should be wrapped in double dollar signs: $$ F = G\\frac{m_1m_2}{r^2} $$ Always use block math (double dollar signs) for every equation, even if it contains merely a \"+\" sign."
       });
 
-      const result = await model.generateContent(query);
+      let result;
+      if (imageFile) {
+        const imagePart = await fileToGenerativePart(imageFile);
+        result = await model.generateContent([imagePart, query]);
+      } else {
+        result = await model.generateContent(query);
+      }
+
       const response = await result.response;
       const text = response.text();
 
