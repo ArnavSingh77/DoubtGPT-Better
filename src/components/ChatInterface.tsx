@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { GoogleGenerativeAI, Content } from "@google/generative-ai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { SearchBar } from "./SearchBar";
 import { ChatMessage } from "./ChatMessage";
 import { Loader2 } from "lucide-react";
@@ -8,79 +8,67 @@ import { useToast } from "./ui/use-toast";
 interface Message {
   content: string;
   isUser: boolean;
+  image?: string;
 }
 
 interface ChatInterfaceProps {
   initialQuery?: string;
 }
 
+const convertImageToBase64 = (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = (error) => reject(error);
+  });
+};
+
 export const ChatInterface = ({ initialQuery }: ChatInterfaceProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const [isVisible, setIsVisible] = useState(false);
-  const [chatHistory, setChatHistory] = useState<Content[]>([]);
 
   useEffect(() => {
     setTimeout(() => setIsVisible(true), 100);
-    
     if (initialQuery) {
       handleSendMessage(initialQuery);
     }
   }, []);
 
-  const fileToGenerativePart = async (file: File) => {
-    const buffer = await file.arrayBuffer();
-    return {
-      inlineData: {
-        data: Buffer.from(buffer).toString('base64'),
-        mimeType: file.type
-      }
-    };
-  };
-
-  const handleSendMessage = async (query: string, imageFile?: File) => {
+  const handleSendMessage = async (query: string, image?: File) => {
     try {
       setIsLoading(true);
-      setMessages((prev) => [...prev, { content: query, isUser: true }]);
-
-      // Add user message to chat history with correct type
-      const updatedHistory: Content[] = [
-        ...chatHistory,
-        { role: "user", parts: [{ text: query }] }
-      ];
-      setChatHistory(updatedHistory);
+      setMessages((prev) => [...prev, { 
+        content: query || "Image analysis request", 
+        isUser: true,
+        image: image ? URL.createObjectURL(image) : undefined
+      }]);
 
       const genAI = new GoogleGenerativeAI("AIzaSyBqvDih8yCI-jhE2HNkbBdMkaKxXIxT3eA");
-      const model = genAI.getGenerativeModel({
-        model: "gemini-pro"
-      });
-
-      // Create a chat instance with history
-      const chat = model.startChat({
-        history: chatHistory,
-        generationConfig: {
-          maxOutputTokens: 1000,
-        },
-      });
+      // Use gemini-1.5-flash for both text and image content
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
       let result;
-      if (imageFile) {
-        const imagePart = await fileToGenerativePart(imageFile);
-        result = await model.generateContent([imagePart, query]);
+      if (image) {
+        const base64Image = await convertImageToBase64(image);
+        result = await model.generateContent([
+          {
+            inlineData: {
+              data: base64Image.split(',')[1],
+              mimeType: image.type
+            }
+          },
+          query || "Please analyze this image"
+        ]);
       } else {
-        result = await chat.sendMessage(query);
+        result = await model.generateContent(query);
       }
 
       const response = await result.response;
       const text = response.text();
 
-      // Add assistant response to chat history with correct type
-      setChatHistory([
-        ...updatedHistory,
-        { role: "model", parts: [{ text: text }] }
-      ]);
-      
       setMessages((prev) => [...prev, { content: text, isUser: false }]);
     } catch (error) {
       console.error("Error generating response:", error);
@@ -103,6 +91,7 @@ export const ChatInterface = ({ initialQuery }: ChatInterfaceProps) => {
               key={index}
               content={message.content}
               isUser={message.isUser}
+              image={message.image}
             />
           ))}
           {isLoading && (

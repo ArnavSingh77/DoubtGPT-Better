@@ -1,16 +1,15 @@
 import { Search, Image } from "lucide-react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { useState, useRef } from "react";
+import { useState } from "react";
 
 interface SearchBarProps {
-  onSubmit?: (query: string, imageFile?: File) => void;
+  onSubmit?: (query: string, image?: File) => void;
 }
 
 export const SearchBar = ({ onSubmit }: SearchBarProps) => {
   const [query, setQuery] = useState("");
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,14 +20,9 @@ export const SearchBar = ({ onSubmit }: SearchBarProps) => {
     }
   };
 
-  const handleImageClick = () => {
-    fileInputRef.current?.click();
-  };
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setSelectedImage(file);
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setSelectedImage(e.target.files[0]);
     }
   };
 
@@ -42,20 +36,20 @@ export const SearchBar = ({ onSubmit }: SearchBarProps) => {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
-        <input
-          type="file"
-          ref={fileInputRef}
-          className="hidden"
-          accept="image/*"
-          onChange={handleImageChange}
-        />
         <div className="absolute right-2 flex gap-2">
+          <input
+            type="file"
+            id="image-upload"
+            className="hidden"
+            accept="image/*"
+            onChange={handleImageUpload}
+          />
           <Button
             type="button"
             variant="ghost"
             size="icon"
             className={`hover:bg-primary/10 ${selectedImage ? 'text-primary' : ''}`}
-            onClick={handleImageClick}
+            onClick={() => document.getElementById('image-upload')?.click()}
           >
             <Image className="h-5 w-5" />
           </Button>
@@ -65,8 +59,10 @@ export const SearchBar = ({ onSubmit }: SearchBarProps) => {
         </div>
       </div>
       {selectedImage && (
-        <div className="mt-2 text-sm text-muted-foreground">
-          Selected image: {selectedImage.name}
+        <div className="mt-2 p-2 bg-secondary rounded-lg">
+          <p className="text-sm text-secondary-foreground">
+            Selected image: {selectedImage.name}
+          </p>
         </div>
       )}
     </form>
