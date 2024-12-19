@@ -41,38 +41,50 @@ export const ChatInterface = ({ initialQuery }: ChatInterfaceProps) => {
   const handleSendMessage = async (query: string, image?: File) => {
     try {
       setIsLoading(true);
-      
-      // Create object URL for the uploaded image
-      const imageUrl = image ? URL.createObjectURL(image) : undefined;
-      
+      console.log("Processing message with image:", image ? "Yes" : "No");
+
+      let imageUrl: string | undefined;
+      let base64Image: string | undefined;
+
+      if (image) {
+        imageUrl = URL.createObjectURL(image);
+        base64Image = await convertImageToBase64(image);
+        console.log("Image converted to base64");
+      }
+
       // Add user message with image to chat
-      setMessages((prev) => [...prev, { 
-        content: query || "Image analysis request", 
+      setMessages((prev) => [...prev, {
+        content: query || "Image analysis request",
         isUser: true,
         image: imageUrl
       }]);
 
       const genAI = new GoogleGenerativeAI("AIzaSyBqvDih8yCI-jhE2HNkbBdMkaKxXIxT3eA");
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro-latest" });
 
       let result;
-      if (image) {
-        const base64Image = await convertImageToBase64(image);
+      if (image && base64Image) {
+        console.log("Sending image to Gemini");
+        const imageParts = base64Image.split(',');
+        const base64Data = imageParts[1];
+        
         result = await model.generateContent([
           {
             inlineData: {
-              data: base64Image.split(',')[1],
+              data: base64Data,
               mimeType: image.type
             }
           },
           query || "Please analyze this image"
         ]);
       } else {
+        console.log("Sending text-only query to Gemini");
         result = await model.generateContent(query);
       }
 
       const response = await result.response;
       const text = response.text();
+      console.log("Received response from Gemini");
 
       setMessages((prev) => [...prev, { content: text, isUser: false }]);
     } catch (error) {
