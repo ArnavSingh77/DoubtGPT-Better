@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenerativeAI, Content } from "@google/generative-ai";
 import { SearchBar } from "./SearchBar";
 import { ChatMessage } from "./ChatMessage";
 import { Loader2 } from "lucide-react";
@@ -19,7 +19,7 @@ export const ChatInterface = ({ initialQuery }: ChatInterfaceProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const [isVisible, setIsVisible] = useState(false);
-  const [chatHistory, setChatHistory] = useState<{ role: string; parts: string }[]>([]);
+  const [chatHistory, setChatHistory] = useState<Content[]>([]);
 
   useEffect(() => {
     setTimeout(() => setIsVisible(true), 100);
@@ -44,8 +44,11 @@ export const ChatInterface = ({ initialQuery }: ChatInterfaceProps) => {
       setIsLoading(true);
       setMessages((prev) => [...prev, { content: query, isUser: true }]);
 
-      // Add user message to chat history
-      const updatedHistory = [...chatHistory, { role: "user", parts: query }];
+      // Add user message to chat history with correct type
+      const updatedHistory: Content[] = [
+        ...chatHistory,
+        { role: "user", parts: [{ text: query }] }
+      ];
       setChatHistory(updatedHistory);
 
       const genAI = new GoogleGenerativeAI("AIzaSyBqvDih8yCI-jhE2HNkbBdMkaKxXIxT3eA");
@@ -72,8 +75,12 @@ export const ChatInterface = ({ initialQuery }: ChatInterfaceProps) => {
       const response = await result.response;
       const text = response.text();
 
-      // Add assistant response to chat history
-      setChatHistory([...updatedHistory, { role: "assistant", parts: text }]);
+      // Add assistant response to chat history with correct type
+      setChatHistory([
+        ...updatedHistory,
+        { role: "model", parts: [{ text: text }] }
+      ]);
+      
       setMessages((prev) => [...prev, { content: text, isUser: false }]);
     } catch (error) {
       console.error("Error generating response:", error);
