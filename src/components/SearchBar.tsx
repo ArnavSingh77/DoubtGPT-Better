@@ -10,6 +10,7 @@ interface SearchBarProps {
 export const SearchBar = ({ onSubmit }: SearchBarProps) => {
   const [query, setQuery] = useState("");
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const maxLength = 1000;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,8 +36,12 @@ export const SearchBar = ({ onSubmit }: SearchBarProps) => {
           className="w-full pl-4 pr-32 py-6 text-lg rounded-xl border-2 border-primary/20 focus:border-primary/40 transition-colors"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
+          maxLength={maxLength}
         />
-        <div className="absolute right-2 flex gap-2">
+        <div className="absolute right-2 flex gap-2 items-center">
+          <span className="text-xs text-muted-foreground mr-2">
+            {query.length}/{maxLength}
+          </span>
           <input
             type="file"
             id="image-upload"

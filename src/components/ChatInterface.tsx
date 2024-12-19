@@ -4,6 +4,7 @@ import { SearchBar } from "./SearchBar";
 import { ChatMessage } from "./ChatMessage";
 import { Loader2 } from "lucide-react";
 import { useToast } from "./ui/use-toast";
+import { Button } from "./ui/button";
 
 interface Message {
   content: string;
@@ -86,9 +87,28 @@ export const ChatInterface = ({ initialQuery }: ChatInterfaceProps) => {
     }
   };
 
+  const handleClearChat = () => {
+    setMessages([]);
+    toast({
+      description: "Chat history cleared",
+      duration: 2000,
+    });
+  };
+
   return (
     <div className={`w-full max-w-4xl mx-auto transition-all duration-500 ease-in-out ${isVisible ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}`}>
       <div className="bg-card rounded-2xl shadow-lg p-6 min-h-[600px] flex flex-col">
+        <div className="flex justify-end mb-4">
+          {messages.length > 0 && (
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={handleClearChat}
+            >
+              Clear Chat
+            </Button>
+          )}
+        </div>
         <div className="flex-1 overflow-y-auto mb-4 space-y-4">
           {messages.map((message, index) => (
             <ChatMessage
