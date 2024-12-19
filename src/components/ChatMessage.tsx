@@ -1,11 +1,8 @@
 import React from "react";
 import ReactMarkdown from "react-markdown";
-import remarkMath from "remark-math";
-import rehypeKatex from "rehype-katex";
-import "katex/dist/katex.min.css";
-import { cn } from "@/lib/utils";
-import { Mic } from "lucide-react";
-import { Button } from "./ui/button";
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
+import 'katex/dist/katex.min.css';
 
 interface ChatMessageProps {
   content: string;
@@ -13,72 +10,25 @@ interface ChatMessageProps {
 }
 
 export const ChatMessage = ({ content, isUser }: ChatMessageProps) => {
-  const startVoiceInput = () => {
-    if (!('webkitSpeechRecognition' in window)) {
-      console.log('Speech recognition not supported');
-      return;
-    }
-
-    const recognition = new (window as any).webkitSpeechRecognition();
-    recognition.continuous = false;
-    recognition.interimResults = false;
-
-    recognition.onresult = (event: any) => {
-      const transcript = event.results[0][0].transcript;
-      console.log('Voice input:', transcript);
-      // Here you would typically send this to your chat handler
-    };
-
-    recognition.start();
-  };
-
   return (
-    <div
-      className={cn(
-        "flex w-full",
-        isUser ? "justify-end" : "justify-start"
-      )}
-    >
+    <div className={`flex ${isUser ? "justify-end" : "justify-start"} mb-4`}>
       <div
-        className={cn(
-          "rounded-lg px-4 py-2 max-w-[80%]",
+        className={`max-w-[80%] p-4 rounded-2xl ${
           isUser
-            ? "bg-primary text-primary-foreground"
-            : "bg-muted"
-        )}
+            ? "bg-primary text-primary-foreground rounded-tr-none"
+            : "bg-secondary text-secondary-foreground rounded-tl-none"
+        }`}
       >
-        <ReactMarkdown
-          remarkPlugins={[remarkMath]}
-          rehypePlugins={[rehypeKatex]}
-          components={{
-            code({ node, inline, className, children, ...props }) {
-              const match = /language-(\w+)/.exec(className || '');
-              return !inline ? (
-                <pre className="bg-black/10 p-2 rounded">
-                  <code className={className} {...props}>
-                    {children}
-                  </code>
-                </pre>
-              ) : (
-                <code className={className} {...props}>
-                  {children}
-                </code>
-              );
-            }
-          }}
-        >
-          {content}
-        </ReactMarkdown>
-        
-        {isUser && (
-          <Button
-            variant="ghost"
-            size="icon"
-            className="ml-2"
-            onClick={startVoiceInput}
+        {isUser ? (
+          content
+        ) : (
+          <ReactMarkdown
+            remarkPlugins={[remarkMath]}
+            rehypePlugins={[rehypeKatex]}
+            className="prose prose-sm max-w-none prose-pre:bg-secondary/50 prose-pre:text-secondary-foreground"
           >
-            <Mic className="h-4 w-4" />
-          </Button>
+            {content}
+          </ReactMarkdown>
         )}
       </div>
     </div>
