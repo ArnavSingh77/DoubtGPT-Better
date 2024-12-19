@@ -61,7 +61,7 @@ const Index = () => {
             <StatCard value="10K+" label="Questions Solved" />
             <StatCard value="10K+" label="Happy Students" />
             <StatCard value="20+" label="Subjects Covered" />
-            <StatCard value="99%" label="Accuracy Rate" />
+            <StatCard value="90%" label="Accuracy Rate" />
           </div>
         </div>
       </div>
