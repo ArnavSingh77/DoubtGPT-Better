@@ -1,9 +1,17 @@
 import { Brain, Clock, CheckCircle } from "lucide-react";
+import { useState } from "react";
 import { ChatInterface } from "@/components/ChatInterface";
+import { SearchBar } from "@/components/SearchBar";
 import { FeatureCard } from "@/components/FeatureCard";
 import { StatCard } from "@/components/StatCard";
 
 const Index = () => {
+  const [isChatVisible, setIsChatVisible] = useState(false);
+
+  const handleSearchSubmit = (query: string) => {
+    setIsChatVisible(true);
+  };
+
   return (
     <div className="min-h-screen gradient-bg">
       <div className="container px-4 py-12">
@@ -15,8 +23,16 @@ const Index = () => {
           </p>
         </div>
 
-        {/* Chat Interface */}
-        <ChatInterface />
+        {/* Search/Chat Section */}
+        <div className={`transition-all duration-500 ease-in-out ${isChatVisible ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}`}>
+          {isChatVisible ? (
+            <ChatInterface />
+          ) : null}
+        </div>
+
+        <div className={`search-container transition-all duration-500 ease-in-out ${isChatVisible ? 'scale-95 opacity-0 hidden' : 'scale-100 opacity-100'}`}>
+          <SearchBar onSubmit={handleSearchSubmit} />
+        </div>
 
         {/* Features */}
         <div className="grid md:grid-cols-3 gap-8 mb-16 mt-16">
