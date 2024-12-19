@@ -47,7 +47,8 @@ export const ChatInterface = ({ initialQuery }: ChatInterfaceProps) => {
       }]);
 
       const genAI = new GoogleGenerativeAI("AIzaSyBqvDih8yCI-jhE2HNkbBdMkaKxXIxT3eA");
-      const model = genAI.getGenerativeModel({ model: image ? "gemini-pro-vision" : "gemini-pro" });
+      // Use gemini-1.5-flash for both text and image content
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
       let result;
       if (image) {
