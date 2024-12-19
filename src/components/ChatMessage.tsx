@@ -7,10 +7,9 @@ import 'katex/dist/katex.min.css';
 interface ChatMessageProps {
   content: string;
   isUser: boolean;
-  image?: string;
 }
 
-export const ChatMessage = ({ content, isUser, image }: ChatMessageProps) => {
+export const ChatMessage = ({ content, isUser }: ChatMessageProps) => {
   return (
     <div className={`flex ${isUser ? "justify-end" : "justify-start"} mb-4`}>
       <div
@@ -20,15 +19,6 @@ export const ChatMessage = ({ content, isUser, image }: ChatMessageProps) => {
             : "bg-secondary text-secondary-foreground rounded-tl-none"
         }`}
       >
-        {image && (
-          <div className="mb-3">
-            <img 
-              src={image} 
-              alt="Uploaded content" 
-              className="max-w-full h-auto rounded-lg"
-            />
-          </div>
-        )}
         {isUser ? (
           content
         ) : (

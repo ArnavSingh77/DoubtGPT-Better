@@ -8,21 +8,11 @@ import { useToast } from "./ui/use-toast";
 interface Message {
   content: string;
   isUser: boolean;
-  image?: string;
 }
 
 interface ChatInterfaceProps {
   initialQuery?: string;
 }
-
-const convertImageToBase64 = (file: File): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = (error) => reject(error);
-  });
-};
 
 export const ChatInterface = ({ initialQuery }: ChatInterfaceProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -32,35 +22,36 @@ export const ChatInterface = ({ initialQuery }: ChatInterfaceProps) => {
 
   useEffect(() => {
     setTimeout(() => setIsVisible(true), 100);
+    
     if (initialQuery) {
       handleSendMessage(initialQuery);
     }
   }, []);
 
-  const handleSendMessage = async (query: string, image?: File) => {
+  const fileToGenerativePart = async (file: File) => {
+    const buffer = await file.arrayBuffer();
+    return {
+      inlineData: {
+        data: Buffer.from(buffer).toString('base64'),
+        mimeType: file.type
+      }
+    };
+  };
+
+  const handleSendMessage = async (query: string, imageFile?: File) => {
     try {
       setIsLoading(true);
-      setMessages((prev) => [...prev, { 
-        content: query || "Image analysis request", 
-        isUser: true,
-        image: image ? URL.createObjectURL(image) : undefined
-      }]);
+      setMessages((prev) => [...prev, { content: query, isUser: true }]);
 
       const genAI = new GoogleGenerativeAI("AIzaSyBqvDih8yCI-jhE2HNkbBdMkaKxXIxT3eA");
-      const model = genAI.getGenerativeModel({ model: image ? "gemini-pro-vision" : "gemini-pro" });
+      const model = genAI.getGenerativeModel({
+        model: imageFile ? "gemini-pro-vision" : "gemini-pro"
+      });
 
       let result;
-      if (image) {
-        const base64Image = await convertImageToBase64(image);
-        result = await model.generateContent([
-          {
-            inlineData: {
-              data: base64Image.split(',')[1],
-              mimeType: image.type
-            }
-          },
-          query || "Please analyze this image"
-        ]);
+      if (imageFile) {
+        const imagePart = await fileToGenerativePart(imageFile);
+        result = await model.generateContent([imagePart, query]);
       } else {
         result = await model.generateContent(query);
       }
@@ -90,7 +81,6 @@ export const ChatInterface = ({ initialQuery }: ChatInterfaceProps) => {
               key={index}
               content={message.content}
               isUser={message.isUser}
-              image={message.image}
             />
           ))}
           {isLoading && (
