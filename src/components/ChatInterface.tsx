@@ -62,8 +62,7 @@ export const ChatInterface = ({ initialQuery }: ChatInterfaceProps) => {
       }]);
 
       const genAI = new GoogleGenerativeAI("AIzaSyBqvDih8yCI-jhE2HNkbBdMkaKxXIxT3eA");
-      // Using a different model with potentially higher quotas
-      const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
 
       let result;
       let retries = 3;
@@ -74,15 +73,25 @@ export const ChatInterface = ({ initialQuery }: ChatInterfaceProps) => {
             console.log("Sending image to Gemini");
             const imageParts = base64Image.split(',');
             const base64Data = imageParts[1];
+            const mimeType = image.type;
             
+            // Create the image part for the model
+            const imagePart = {
+              inlineData: {
+                data: base64Data,
+                mimeType: mimeType
+              }
+            };
+
+            // Create the text part
+            const textPart = query || "Please analyze this image";
+
+            console.log("Sending parts to Gemini:", { mimeType, hasImage: !!base64Data });
+            
+            // Send both parts to the model
             result = await model.generateContent([
-              {
-                inlineData: {
-                  data: base64Data,
-                  mimeType: image.type
-                }
-              },
-              query || "Please analyze this image"
+              imagePart,
+              textPart
             ]);
           } else {
             console.log("Sending text-only query to Gemini");
