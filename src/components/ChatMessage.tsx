@@ -25,7 +25,7 @@ export const ChatMessage = ({ content, isUser, image }: ChatMessageProps) => {
   };
 
   return (
-    <div className={`flex ${isUser ? "justify-end" : "justify-start"} mb-4 group`}>
+    <div className={`flex ${isUser ? "justify-end" : "justify-start"} mb-4 group relative`}>
       <div
         className={`relative max-w-[80%] p-4 rounded-2xl ${
           isUser
@@ -43,19 +43,11 @@ export const ChatMessage = ({ content, isUser, image }: ChatMessageProps) => {
           </div>
         )}
         {isUser ? (
-          <div className="relative">
+          <div>
             {content}
-            <Button
-              variant="ghost"
-              size="icon"
-              className="absolute -right-8 top-0 opacity-0 group-hover:opacity-100 transition-opacity"
-              onClick={handleCopy}
-            >
-              <Copy className="h-4 w-4" />
-            </Button>
           </div>
         ) : (
-          <div className="relative">
+          <div>
             <ReactMarkdown
               remarkPlugins={[remarkMath]}
               rehypePlugins={[rehypeKatex]}
@@ -63,17 +55,17 @@ export const ChatMessage = ({ content, isUser, image }: ChatMessageProps) => {
             >
               {content}
             </ReactMarkdown>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="absolute -right-8 top-0 opacity-0 group-hover:opacity-100 transition-opacity"
-              onClick={handleCopy}
-            >
-              <Copy className="h-4 w-4" />
-            </Button>
           </div>
         )}
       </div>
+      <Button
+        variant="ghost"
+        size="icon"
+        className="absolute top-1 -right-10 opacity-0 group-hover:opacity-100 transition-opacity"
+        onClick={handleCopy}
+      >
+        <Copy className="h-4 w-4" />
+      </Button>
     </div>
   );
 };
