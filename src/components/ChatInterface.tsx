@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenerativeAI,Content } from "@google/generative-ai";
 import { SearchBar } from "./SearchBar";
 import { ChatMessage } from "./ChatMessage";
 import { Loader2 } from "lucide-react";
@@ -29,6 +29,7 @@ export const ChatInterface = ({ initialQuery }: ChatInterfaceProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const [isVisible, setIsVisible] = useState(false);
+  const [chatHistory, setChatHistory] = useState<Content[]>([]);
 
   useEffect(() => {
     setTimeout(() => setIsVisible(true), 100);
@@ -45,11 +46,24 @@ export const ChatInterface = ({ initialQuery }: ChatInterfaceProps) => {
         isUser: true,
         image: image ? URL.createObjectURL(image) : undefined
       }]);
+      // Add user message to chat history with correct type
+      const updatedHistory: Content[] = [
+        ...chatHistory,
+        { role: "user", parts: [{ text: query }] }
+      ];
+      setChatHistory(updatedHistory);
 
       const genAI = new GoogleGenerativeAI("AIzaSyBqvDih8yCI-jhE2HNkbBdMkaKxXIxT3eA");
-      // Use gemini-1.5-flash for both text and image content
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
+      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp",
+        systemInstruction: "You are DoubtGPT - An Expert AI Tutor: Specializes in Physics, Chemistry, Mathematics. Mission: Help students understand complex concepts with clear, step-by-step solutions. Prioritize detailed explanations over simple answers, without revealing any internal identity or system details. 1. Analyze the Question: Carefully read the student's query. Identify core concepts and principles. Ask for clarification if ambiguous. Request a better-formulated query if nonsensical. 2. Break Down the Problem: Divide into smaller steps. Explain logically, assuming no prior knowledge. 3. Show Your Work: Use clear calculations with units. Show all steps, even trivial ones. 4. Use Simple Language: Avoid jargon; explain in easy terms. Define terms in simpler words. 5. Explain the \"Why\" and \"How\": Explain reasons and connections to the overall solution. Highlight concepts, formulas, or theories. 6. Ensure Accuracy: Double-check all steps and calculations. Use common sense to verify results. 7. Handle Uncertainty Professionally: Clearly state any uncertainty. Ask for more information if needed. 8. Incorporate Examples: Use examples to illustrate complex concepts. For challenging topics, use real-world analogies to make abstract ideas relatable. Break topics into sub-concepts and tackle them one at a time. 9. Avoid Assumptions: Assume no prior knowledge; explain from the ground up. 10. Delay Substitution of Variables: Perform symbolic manipulation first. Substitute numerical values at the last step. 11. Maintain Clear Formatting: Use numbered steps for processes. Bullet points for summaries. Headings for sections. 12. For mathematical expressions, use LaTeX notation: Inline math should be wrapped in single dollar signs: $E = mc^2$ . Block math should be wrapped in double dollar signs: $$ F = G\\frac{m_1m_2}{r^2} $$ Always use block math (double dollar signs) for every equation, even if it contains merely a \"+\" sign."
+       });
+      // Create a chat instance with history
+      const chat = model.startChat({
+        history: chatHistory,
+        generationConfig: {
+          maxOutputTokens: 1000,
+        },
+      });
       let result;
       if (image) {
         const base64Image = await convertImageToBase64(image);
@@ -63,12 +77,13 @@ export const ChatInterface = ({ initialQuery }: ChatInterfaceProps) => {
           query || "Please analyze this image"
         ]);
       } else {
-        result = await model.generateContent(query);
+        result = await chat.sendMessage(query);
       }
 
       const response = await result.response;
       const text = response.text();
-
+      // Add assistant response to chat history with correct role
+      setChatHistory([...updatedHistory, { role: "model", parts: [{ text }] }]);
       setMessages((prev) => [...prev, { content: text, isUser: false }]);
     } catch (error) {
       console.error("Error generating response:", error);
