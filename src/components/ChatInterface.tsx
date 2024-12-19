@@ -10,7 +10,11 @@ interface Message {
   isUser: boolean;
 }
 
-export const ChatInterface = () => {
+interface ChatInterfaceProps {
+  initialQuery?: string;
+}
+
+export const ChatInterface = ({ initialQuery }: ChatInterfaceProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
@@ -19,6 +23,11 @@ export const ChatInterface = () => {
   useEffect(() => {
     // Trigger animation after component mount
     setTimeout(() => setIsVisible(true), 100);
+    
+    // Handle initial query if provided
+    if (initialQuery) {
+      handleSendMessage(initialQuery);
+    }
   }, []);
 
   const handleSendMessage = async (query: string) => {
