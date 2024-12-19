@@ -54,7 +54,7 @@ const Index = () => {
         </div>
 
         {/* Stats */}
-        <div className="bg-card rounded-2xl p-8 shadow-lg">
+        <div className="bg-card rounded-2xl p-8 shadow-lg mb-16">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <StatCard value="10K+" label="Questions Solved" />
             <StatCard value="10K+" label="Happy Students" />
@@ -62,6 +62,9 @@ const Index = () => {
             <StatCard value="99%" label="Accuracy Rate" />
           </div>
         </div>
+
+        {/* Bottom Decoration */}
+        <div className="bottom-decoration" />
       </div>
     </div>
   );
