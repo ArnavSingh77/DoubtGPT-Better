@@ -3,14 +3,6 @@ import { SearchBar } from "@/components/SearchBar";
 import { FeatureCard } from "@/components/FeatureCard";
 import { StatCard } from "@/components/StatCard";
 
-const recentQueries = [
-  "the magnetic field in a give...",
-  "consider the reaction unde...",
-  "let m denote the number o...",
-  "a uniform solid sphere of r...",
-  "a particle of mass 1kg is pl...",
-];
-
 const Index = () => {
   return (
     <div className="min-h-screen gradient-bg">
@@ -26,16 +18,6 @@ const Index = () => {
         {/* Search Section */}
         <div className="search-container">
           <SearchBar />
-          <div className="recent-queries">
-            {recentQueries.map((query, index) => (
-              <button
-                key={index}
-                className="px-4 py-2 bg-white/80 hover:bg-white rounded-full text-sm text-muted-foreground transition-colors"
-              >
-                {query}
-              </button>
-            ))}
-          </div>
         </div>
 
         {/* Features */}
