@@ -54,7 +54,7 @@ export const ChatInterface = ({ initialQuery }: ChatInterfaceProps) => {
 
   return (
     <div className={`w-full max-w-4xl mx-auto transition-all duration-500 ease-in-out ${isVisible ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}`}>
-      <div className="bg-card/50 backdrop-blur-sm rounded-2xl shadow-lg p-6 min-h-[600px] flex flex-col border border-primary/10">
+      <div className="bg-card rounded-lg min-h-[600px] flex flex-col">
         <div className="flex-1 overflow-y-auto mb-4 space-y-4 p-4">
           {messages.map((message, index) => (
             <ChatMessage
@@ -69,7 +69,7 @@ export const ChatInterface = ({ initialQuery }: ChatInterfaceProps) => {
             </div>
           )}
         </div>
-        <div className="mt-auto pt-4 border-t border-primary/10">
+        <div className="mt-auto pt-4 border-t">
           <SearchBar onSubmit={handleSendMessage} />
         </div>
       </div>
