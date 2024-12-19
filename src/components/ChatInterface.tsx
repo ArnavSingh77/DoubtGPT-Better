@@ -19,6 +19,7 @@ export const ChatInterface = ({ initialQuery }: ChatInterfaceProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const [isVisible, setIsVisible] = useState(false);
+  const [chatHistory, setChatHistory] = useState<{ role: string; parts: string }[]>([]);
 
   useEffect(() => {
     setTimeout(() => setIsVisible(true), 100);
@@ -43,9 +44,21 @@ export const ChatInterface = ({ initialQuery }: ChatInterfaceProps) => {
       setIsLoading(true);
       setMessages((prev) => [...prev, { content: query, isUser: true }]);
 
+      // Add user message to chat history
+      const updatedHistory = [...chatHistory, { role: "user", parts: query }];
+      setChatHistory(updatedHistory);
+
       const genAI = new GoogleGenerativeAI("AIzaSyBqvDih8yCI-jhE2HNkbBdMkaKxXIxT3eA");
       const model = genAI.getGenerativeModel({
-        model: imageFile ? "gemini-pro-vision" : "gemini-pro"
+        model: "gemini-pro"
+      });
+
+      // Create a chat instance with history
+      const chat = model.startChat({
+        history: chatHistory,
+        generationConfig: {
+          maxOutputTokens: 1000,
+        },
       });
 
       let result;
@@ -53,12 +66,14 @@ export const ChatInterface = ({ initialQuery }: ChatInterfaceProps) => {
         const imagePart = await fileToGenerativePart(imageFile);
         result = await model.generateContent([imagePart, query]);
       } else {
-        result = await model.generateContent(query);
+        result = await chat.sendMessage(query);
       }
 
       const response = await result.response;
       const text = response.text();
 
+      // Add assistant response to chat history
+      setChatHistory([...updatedHistory, { role: "assistant", parts: text }]);
       setMessages((prev) => [...prev, { content: text, isUser: false }]);
     } catch (error) {
       console.error("Error generating response:", error);
