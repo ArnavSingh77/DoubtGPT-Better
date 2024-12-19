@@ -9,13 +9,13 @@ export const ChatMessage = ({ content, isUser }: ChatMessageProps) => {
   return (
     <div className={`flex ${isUser ? "justify-end" : "justify-start"} mb-4`}>
       <div
-        className={`max-w-[80%] p-4 rounded-lg ${
+        className={`max-w-[80%] p-4 rounded-2xl ${
           isUser
-            ? "bg-primary text-primary-foreground"
-            : "bg-secondary text-secondary-foreground"
+            ? "bg-primary text-primary-foreground rounded-tr-none"
+            : "bg-secondary text-secondary-foreground rounded-tl-none"
         }`}
       >
-        <p className="whitespace-pre-wrap">{content}</p>
+        {content}
       </div>
     </div>
   );

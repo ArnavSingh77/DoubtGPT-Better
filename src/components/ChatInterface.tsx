@@ -10,21 +10,15 @@ interface Message {
   isUser: boolean;
 }
 
-interface ChatInterfaceProps {
-  initialQuery?: string;
-}
-
-export const ChatInterface = ({ initialQuery }: ChatInterfaceProps) => {
+export const ChatInterface = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
+    // Trigger animation after component mount
     setTimeout(() => setIsVisible(true), 100);
-    if (initialQuery) {
-      handleSendMessage(initialQuery);
-    }
   }, []);
 
   const handleSendMessage = async (query: string) => {
@@ -32,8 +26,9 @@ export const ChatInterface = ({ initialQuery }: ChatInterfaceProps) => {
       setIsLoading(true);
       setMessages((prev) => [...prev, { content: query, isUser: true }]);
 
+      // Initialize Gemini API with a placeholder - you'll need to set this up securely
       const genAI = new GoogleGenerativeAI("AIzaSyBqvDih8yCI-jhE2HNkbBdMkaKxXIxT3eA");
-      const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
 
       const result = await model.generateContent(query);
       const response = await result.response;
@@ -54,8 +49,8 @@ export const ChatInterface = ({ initialQuery }: ChatInterfaceProps) => {
 
   return (
     <div className={`w-full max-w-4xl mx-auto transition-all duration-500 ease-in-out ${isVisible ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}`}>
-      <div className="bg-card rounded-lg min-h-[600px] flex flex-col">
-        <div className="flex-1 overflow-y-auto mb-4 space-y-4 p-4">
+      <div className="bg-card rounded-2xl shadow-lg p-6 min-h-[600px] flex flex-col">
+        <div className="flex-1 overflow-y-auto mb-4 space-y-4">
           {messages.map((message, index) => (
             <ChatMessage
               key={index}
@@ -69,7 +64,7 @@ export const ChatInterface = ({ initialQuery }: ChatInterfaceProps) => {
             </div>
           )}
         </div>
-        <div className="mt-auto pt-4 border-t">
+        <div className="mt-auto">
           <SearchBar onSubmit={handleSendMessage} />
         </div>
       </div>
