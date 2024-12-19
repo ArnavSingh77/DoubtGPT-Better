@@ -40,10 +40,15 @@ export const ChatInterface = ({ initialQuery }: ChatInterfaceProps) => {
   const handleSendMessage = async (query: string, image?: File) => {
     try {
       setIsLoading(true);
+      
+      // Create object URL for the uploaded image
+      const imageUrl = image ? URL.createObjectURL(image) : undefined;
+      
+      // Add user message with image to chat
       setMessages((prev) => [...prev, { 
         content: query || "Image analysis request", 
         isUser: true,
-        image: image ? URL.createObjectURL(image) : undefined
+        image: imageUrl
       }]);
 
       const genAI = new GoogleGenerativeAI("AIzaSyBqvDih8yCI-jhE2HNkbBdMkaKxXIxT3eA");
