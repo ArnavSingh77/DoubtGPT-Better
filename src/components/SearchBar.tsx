@@ -3,13 +3,19 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { useState } from "react";
 
-export const SearchBar = () => {
+interface SearchBarProps {
+  onSubmit?: (query: string) => void;
+}
+
+export const SearchBar = ({ onSubmit }: SearchBarProps) => {
   const [query, setQuery] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement search functionality
-    console.log("Searching:", query);
+    if (query.trim() && onSubmit) {
+      onSubmit(query);
+      setQuery("");
+    }
   };
 
   return (

@@ -1,5 +1,5 @@
 import { Brain, Clock, CheckCircle } from "lucide-react";
-import { SearchBar } from "@/components/SearchBar";
+import { ChatInterface } from "@/components/ChatInterface";
 import { FeatureCard } from "@/components/FeatureCard";
 import { StatCard } from "@/components/StatCard";
 
@@ -15,13 +15,11 @@ const Index = () => {
           </p>
         </div>
 
-        {/* Search Section */}
-        <div className="search-container">
-          <SearchBar />
-        </div>
+        {/* Chat Interface */}
+        <ChatInterface />
 
         {/* Features */}
-        <div className="grid md:grid-cols-3 gap-8 mb-16">
+        <div className="grid md:grid-cols-3 gap-8 mb-16 mt-16">
           <FeatureCard
             icon={Brain}
             title="Smart Solutions"
