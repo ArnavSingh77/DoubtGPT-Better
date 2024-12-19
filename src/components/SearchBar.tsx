@@ -4,17 +4,25 @@ import { Input } from "./ui/input";
 import { useState } from "react";
 
 interface SearchBarProps {
-  onSubmit?: (query: string) => void;
+  onSubmit?: (query: string, image?: File) => void;
 }
 
 export const SearchBar = ({ onSubmit }: SearchBarProps) => {
   const [query, setQuery] = useState("");
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (query.trim() && onSubmit) {
-      onSubmit(query);
+    if ((query.trim() || selectedImage) && onSubmit) {
+      onSubmit(query, selectedImage || undefined);
       setQuery("");
+      setSelectedImage(null);
+    }
+  };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setSelectedImage(e.target.files[0]);
     }
   };
 
@@ -29,11 +37,19 @@ export const SearchBar = ({ onSubmit }: SearchBarProps) => {
           onChange={(e) => setQuery(e.target.value)}
         />
         <div className="absolute right-2 flex gap-2">
+          <input
+            type="file"
+            id="image-upload"
+            className="hidden"
+            accept="image/*"
+            onChange={handleImageUpload}
+          />
           <Button
             type="button"
             variant="ghost"
             size="icon"
-            className="hover:bg-primary/10"
+            className={`hover:bg-primary/10 ${selectedImage ? 'text-primary' : ''}`}
+            onClick={() => document.getElementById('image-upload')?.click()}
           >
             <Image className="h-5 w-5" />
           </Button>
@@ -42,6 +58,13 @@ export const SearchBar = ({ onSubmit }: SearchBarProps) => {
           </Button>
         </div>
       </div>
+      {selectedImage && (
+        <div className="mt-2 p-2 bg-secondary rounded-lg">
+          <p className="text-sm text-secondary-foreground">
+            Selected image: {selectedImage.name}
+          </p>
+        </div>
+      )}
     </form>
   );
 };
