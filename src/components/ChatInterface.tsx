@@ -25,6 +25,8 @@ const convertImageToBase64 = (file: File): Promise<string> => {
   });
 };
 
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
 export const ChatInterface = ({ initialQuery }: ChatInterfaceProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -60,26 +62,47 @@ export const ChatInterface = ({ initialQuery }: ChatInterfaceProps) => {
       }]);
 
       const genAI = new GoogleGenerativeAI("AIzaSyBqvDih8yCI-jhE2HNkbBdMkaKxXIxT3eA");
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro-latest" });
+      // Using a different model with potentially higher quotas
+      const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
       let result;
-      if (image && base64Image) {
-        console.log("Sending image to Gemini");
-        const imageParts = base64Image.split(',');
-        const base64Data = imageParts[1];
-        
-        result = await model.generateContent([
-          {
-            inlineData: {
-              data: base64Data,
-              mimeType: image.type
-            }
-          },
-          query || "Please analyze this image"
-        ]);
-      } else {
-        console.log("Sending text-only query to Gemini");
-        result = await model.generateContent(query);
+      let retries = 3;
+      
+      while (retries > 0) {
+        try {
+          if (image && base64Image) {
+            console.log("Sending image to Gemini");
+            const imageParts = base64Image.split(',');
+            const base64Data = imageParts[1];
+            
+            result = await model.generateContent([
+              {
+                inlineData: {
+                  data: base64Data,
+                  mimeType: image.type
+                }
+              },
+              query || "Please analyze this image"
+            ]);
+          } else {
+            console.log("Sending text-only query to Gemini");
+            result = await model.generateContent(query);
+          }
+          break; // If successful, exit the retry loop
+        } catch (error: any) {
+          console.log("Gemini API error:", error);
+          if (error.status === 429 && retries > 1) {
+            retries--;
+            console.log(`Rate limited. Retrying in 2 seconds... (${retries} retries left)`);
+            await delay(2000); // Wait 2 seconds before retrying
+            continue;
+          }
+          throw error; // If we're out of retries or it's a different error, rethrow
+        }
+      }
+
+      if (!result) {
+        throw new Error("Failed to generate response after retries");
       }
 
       const response = await result.response;
@@ -87,11 +110,17 @@ export const ChatInterface = ({ initialQuery }: ChatInterfaceProps) => {
       console.log("Received response from Gemini");
 
       setMessages((prev) => [...prev, { content: text, isUser: false }]);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error generating response:", error);
+      let errorMessage = "Failed to generate response. Please try again.";
+      
+      if (error.status === 429) {
+        errorMessage = "We've hit the API rate limit. Please try again in a few minutes.";
+      }
+      
       toast({
         title: "Error",
-        description: "Failed to generate response. Please try again.",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
