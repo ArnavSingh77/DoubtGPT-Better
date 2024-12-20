@@ -8,9 +8,11 @@ import { StatCard } from "@/components/StatCard";
 const Index = () => {
   const [isChatVisible, setIsChatVisible] = useState(false);
   const [initialQuery, setInitialQuery] = useState("");
+  const [initialImage, setInitialImage] = useState<File | undefined>();
 
-  const handleSearchSubmit = (query: string) => {
+  const handleSearchSubmit = (query: string, image?: File) => {
     setInitialQuery(query);
+    setInitialImage(image);
     setIsChatVisible(true);
   };
 
@@ -28,7 +30,7 @@ const Index = () => {
         {/* Search/Chat Section */}
         <div className={`transition-all duration-500 ease-in-out ${isChatVisible ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}`}>
           {isChatVisible ? (
-            <ChatInterface initialQuery={initialQuery} />
+            <ChatInterface initialQuery={initialQuery} initialImage={initialImage} />
           ) : null}
         </div>
 

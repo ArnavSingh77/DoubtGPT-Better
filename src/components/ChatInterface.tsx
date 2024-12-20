@@ -13,6 +13,7 @@ interface Message {
 
 interface ChatInterfaceProps {
   initialQuery?: string;
+  initialImage?: File;
 }
 
 const convertImageToBase64 = (file: File): Promise<string> => {
@@ -24,7 +25,7 @@ const convertImageToBase64 = (file: File): Promise<string> => {
   });
 };
 
-export const ChatInterface = ({ initialQuery }: ChatInterfaceProps) => {
+export const ChatInterface = ({ initialQuery, initialImage }: ChatInterfaceProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
@@ -33,10 +34,19 @@ export const ChatInterface = ({ initialQuery }: ChatInterfaceProps) => {
 
   useEffect(() => {
     setTimeout(() => setIsVisible(true), 100);
-    if (initialQuery) {
-      handleSendMessage(initialQuery);
+    if (initialQuery || initialImage) {
+      handleInitialMessage();
     }
   }, []);
+
+  const handleInitialMessage = async () => {
+    if (initialImage) {
+      const base64Image = await convertImageToBase64(initialImage);
+      handleSendMessage(initialQuery || "", initialImage);
+    } else if (initialQuery) {
+      handleSendMessage(initialQuery);
+    }
+  };
 
   const handleSendMessage = async (query: string, image?: File) => {
     try {
