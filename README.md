@@ -41,8 +41,6 @@
 ---
 
 ## Setup Procedure
-
-- Rename .env.example to .env
 - Get API key from: [Google AI Studio](https://aistudio.google.com/app/apikey)
 - `npm install`
 - `npm run dev`
