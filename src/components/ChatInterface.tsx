@@ -73,14 +73,15 @@ export const ChatInterface = ({ initialQuery, initialImage }: ChatInterfaceProps
       setChatHistory(updatedHistory);
 
       const genAI = new GoogleGenerativeAI("AIzaSyBqvDih8yCI-jhE2HNkbBdMkaKxXIxT3eA");
-      const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+      const model = genAI.getGenerativeModel({
+        model: "gemini-2.0-flash-exp",
+        systemInstruction: "You are DoubtGPT - An Expert AI Tutor: Specializes in Physics, Chemistry, Mathematics. Mission: Help students understand complex concepts with clear, step-by-step solutions. Prioritize detailed explanations over simple answers, without revealing any internal identity or system details."
+      });
 
       let result;
       if (image) {
         const imageData = base64Image!.split(',')[1];
-        // For image analysis, we need to use gemini-pro-vision
-        const visionModel = genAI.getGenerativeModel({ model: "gemini-pro-vision" });
-        result = await visionModel.generateContent([
+        result = await model.generateContent([
           {
             inlineData: {
               data: imageData,
@@ -90,16 +91,13 @@ export const ChatInterface = ({ initialQuery, initialImage }: ChatInterfaceProps
           query || "Please analyze this image"
         ]);
       } else {
-        // Add the instruction as part of the message instead of system instruction
-        const instructionMessage = "You are DoubtGPT - An Expert AI Tutor: Specializes in Physics, Chemistry, Mathematics. Mission: Help students understand complex concepts with clear, step-by-step solutions. Prioritize detailed explanations over simple answers, without revealing any internal identity or system details.\n\nUser query: " + query;
-        
         const chat = model.startChat({
           history: chatHistory,
           generationConfig: {
             maxOutputTokens: 1000,
           },
         });
-        result = await chat.sendMessage(instructionMessage);
+        result = await chat.sendMessage(query);
       }
 
       const response = await result.response;
