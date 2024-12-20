@@ -1,69 +1,48 @@
-# Welcome to your Lovable project
+# [DoubtGPT](https://doubtgpt.netlify.app)
 
-## Project info
+**DoubtGPT** is an AI-powered platform designed to solve your doubts in **Physics**, **Chemistry**, and **Mathematics**. Whether you're a high school student, a competitive exam aspirant, or just a curious learner, DoubtGPT is your go-to solution for clarifying concepts, solving problems, and learning efficiently.
 
-**URL**: https://lovable.dev/projects/349db432-1ef4-439c-8639-3ca35993cb51
+## ✨ Features
 
-## How can I edit this code?
+- **AI-Powered Assistance**: Get instant, accurate, and step-by-step explanations for your questions in PCM.
+- **Subject-Specific Expertise**: Focused on Physics, Chemistry, and Maths to provide precise solutions tailored to each subject.
+- **User-Friendly Interface**: A clean and intuitive UI designed for seamless learning.
+- **24/7 Availability**: Solve your doubts anytime, anywhere.
+- **Personalized Responses**: Receive answers tailored to your level of understanding.
+- **Image Uploads**: Upload images of your questions.
 
-There are several ways of editing your application.
+## 🚀 How It Works
 
-**Use Lovable**
+1. **Ask Your Question**: Type or upload your query in the input field. You can also upload an image of your question.
+2. **AI Processing**: The AI model analyzes your question and generates an accurate response.
+3. **Detailed Explanation**: View the step-by-step solution or concept breakdown.
+4. **Follow-Up Questions**: Clarify further doubts based on the response.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/349db432-1ef4-439c-8639-3ca35993cb51) and start prompting.
+## 📚 Ideal For
 
-Changes made via Lovable will be committed automatically to this repo.
+- **Competitive Exam Aspirants** (JEE, BITSAT, etc.)
+- **High School Students**
+- **University Students**
+- **Lifelong Learners**
 
-**Use your preferred IDE**
+## 🛠️ Built With
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+- **Vite** for frontend development.
+- **Google Gemini API** for integrating AI capabilities.
+- **Tailwind CSS** for responsive and aesthetic design.
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## 🌟 Why Choose DoubtGPT?
 
-Follow these steps:
+- Focused on **PCM Subjects**: Specialized for PCM, ensuring precise answers.
+- Harnesses the **power of AI** to make learning efficient and engaging.
+- Designed with learners in mind, offering a distraction-free experience.
+- Gives **step-by-step solutions**, helping noobs learn.
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+---
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+## Setup Procedure
 
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with .
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/349db432-1ef4-439c-8639-3ca35993cb51) and click on Share -> Publish.
-
-## I want to use a custom domain - is that possible?
-
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+- Rename .env.example to .env
+- Get API key from: [Google AI Studio](https://aistudio.google.com/app/apikey)
+- `npm install`
+- `npm run dev`
