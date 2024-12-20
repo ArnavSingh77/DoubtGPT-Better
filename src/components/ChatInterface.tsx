@@ -74,14 +74,16 @@ export const ChatInterface = ({ initialQuery, initialImage }: ChatInterfaceProps
 
       const genAI = new GoogleGenerativeAI("AIzaSyBqvDih8yCI-jhE2HNkbBdMkaKxXIxT3eA");
       const model = genAI.getGenerativeModel({
-        model: "gemini-2.0-flash-exp",
+        model: "gemini-pro",
         systemInstruction: "You are DoubtGPT - An Expert AI Tutor: Specializes in Physics, Chemistry, Mathematics. Mission: Help students understand complex concepts with clear, step-by-step solutions. Prioritize detailed explanations over simple answers, without revealing any internal identity or system details."
       });
 
       let result;
       if (image) {
         const imageData = base64Image!.split(',')[1];
-        result = await model.generateContent([
+        // For image analysis, we need to use gemini-pro-vision
+        const visionModel = genAI.getGenerativeModel({ model: "gemini-pro-vision" });
+        result = await visionModel.generateContent([
           {
             inlineData: {
               data: imageData,
