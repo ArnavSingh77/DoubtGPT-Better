@@ -8,9 +8,13 @@ import { StatCard } from "@/components/StatCard";
 const Index = () => {
   const [isChatVisible, setIsChatVisible] = useState(false);
   const [initialQuery, setInitialQuery] = useState("");
+  const [initialImage, setInitialImage] = useState<File | undefined>();
 
-  const handleSearchSubmit = (query: string) => {
+  const handleSearchSubmit = (query: string
+    , image?: File
+    ) => {
     setInitialQuery(query);
+    setInitialImage(image);
     setIsChatVisible(true);
   };
 
@@ -21,14 +25,14 @@ const Index = () => {
         <div className="text-center mb-8">
           <h1 className="text-5xl font-bold mb-4">DoubtGPT</h1>
           <p className="text-xl text-muted-foreground">
-            One-stop to all your doubts.
+            Padhlo chahe kahin se, doubts poocho yahin se.
           </p>
         </div>
 
         {/* Search/Chat Section */}
         <div className={`transition-all duration-500 ease-in-out ${isChatVisible ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}`}>
           {isChatVisible ? (
-            <ChatInterface initialQuery={initialQuery} />
+            <ChatInterface initialQuery={initialQuery} initialImage={initialImage} />
           ) : null}
         </div>
 
