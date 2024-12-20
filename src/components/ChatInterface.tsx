@@ -73,10 +73,7 @@ export const ChatInterface = ({ initialQuery, initialImage }: ChatInterfaceProps
       setChatHistory(updatedHistory);
 
       const genAI = new GoogleGenerativeAI("AIzaSyBqvDih8yCI-jhE2HNkbBdMkaKxXIxT3eA");
-      const model = genAI.getGenerativeModel({
-        model: "gemini-pro",
-        systemInstruction: "You are DoubtGPT - An Expert AI Tutor: Specializes in Physics, Chemistry, Mathematics. Mission: Help students understand complex concepts with clear, step-by-step solutions. Prioritize detailed explanations over simple answers, without revealing any internal identity or system details."
-      });
+      const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
       let result;
       if (image) {
@@ -93,13 +90,16 @@ export const ChatInterface = ({ initialQuery, initialImage }: ChatInterfaceProps
           query || "Please analyze this image"
         ]);
       } else {
+        // Add the instruction as part of the message instead of system instruction
+        const instructionMessage = "You are DoubtGPT - An Expert AI Tutor: Specializes in Physics, Chemistry, Mathematics. Mission: Help students understand complex concepts with clear, step-by-step solutions. Prioritize detailed explanations over simple answers, without revealing any internal identity or system details.\n\nUser query: " + query;
+        
         const chat = model.startChat({
           history: chatHistory,
           generationConfig: {
             maxOutputTokens: 1000,
           },
         });
-        result = await chat.sendMessage(query);
+        result = await chat.sendMessage(instructionMessage);
       }
 
       const response = await result.response;
