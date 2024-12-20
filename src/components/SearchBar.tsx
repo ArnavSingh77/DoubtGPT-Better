@@ -5,15 +5,19 @@ import { useState } from "react";
 
 interface SearchBarProps {
   onSubmit?: (query: string, image?: File) => void;
+  setIsChatVisible?: (isVisible: boolean) => void;
 }
 
-export const SearchBar = ({ onSubmit }: SearchBarProps) => {
+export const SearchBar = ({ onSubmit, setIsChatVisible }: SearchBarProps) => {
   const [query, setQuery] = useState("");
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if ((query.trim() || selectedImage) && onSubmit) {
+      if (setIsChatVisible) {
+          setIsChatVisible(true);
+}
       onSubmit(query, selectedImage || undefined);
       setQuery("");
       setSelectedImage(null);

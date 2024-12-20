@@ -9,14 +9,12 @@ const Index = () => {
   const [isChatVisible, setIsChatVisible] = useState(false);
   const [initialQuery, setInitialQuery] = useState("");
   const [initialImage, setInitialImage] = useState<File | undefined>();
-  const [initialImage, setInitialImage] = useState<File | undefined>();
 
   const handleSearchSubmit = (query: string
     , image?: File
     ) => {
     setInitialQuery(query);
     setInitialImage(image);
-    setIsChatVisible(true);
   };
 
   return (
@@ -39,12 +37,16 @@ const Index = () => {
         >
           {isChatVisible ? (
             <ChatInterface initialQuery={initialQuery} initialImage={initialImage} />
-            <ChatInterface initialQuery={initialQuery} initialImage={initialImage} />
           ) : null}
         </div>
 
-        <div className={`search-container transition-all duration-500 ease-in-out ${isChatVisible ? 'scale-95 opacity-0 hidden' : 'scale-100 opacity-100'}`}>
-          <SearchBar onSubmit={handleSearchSubmit} />
+        <div 
+          className={`
+            search-container transition-all duration-500 ease-in-out transform
+            ${isChatVisible ? 'scale-95 opacity-0 hidden' : 'scale-100 opacity-100'}
+          `}
+        >
+          <SearchBar onSubmit={handleSearchSubmit} setIsChatVisible={setIsChatVisible} />
         </div>
 
         {/* Features Section with hover effects */}
