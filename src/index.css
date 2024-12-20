@@ -66,3 +66,47 @@
 .recent-queries {
   @apply flex flex-wrap gap-2 justify-center mt-4;
 }
+
+/* Add table border styles */
+.prose table {
+  @apply border-collapse;
+  width: 100%;
+}
+
+.prose th,
+.prose td {
+  @apply border border-border p-2;
+}
+
+.prose th {
+  @apply font-bold;
+}
+
+/* Add text wrapping */
+.prose {
+    overflow-wrap: break-word;
+}
+
+/* Adjust layout for larger screens */
+@media (min-width: 768px) {
+    .search-container {
+        @apply max-w-4xl;
+    }
+}
+
+/* Adjust layout for smaller screens */
+@media (max-width: 767px) {
+    .search-container {
+        @apply w-full px-4;
+    }
+}
+
+.chat-interface {
+    @apply w-full max-w-4xl mx-auto;
+}
+
+@media (max-width: 767px) {
+    .chat-interface {
+        @apply w-full px-4;
+    }
+}

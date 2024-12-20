@@ -1,4 +1,4 @@
-import { Brain, Clock, CheckCircle } from "lucide-react";
+import { Brain, Clock, CheckCircle, ReceiptIndianRupee } from "lucide-react";
 import { useState } from "react";
 import { ChatInterface } from "./../components/ChatInterface";
 import { SearchBar } from "./../components/SearchBar";
@@ -67,9 +67,9 @@ const Index = () => {
           </div>
           <div className="animate-fade-in" style={{ animationDelay: "0.6s" }}>
             <FeatureCard
-              icon={CheckCircle}
-              title="Verified Content"
-              description="Every solution is thoroughly verified for accuracy and clarity by our expert team."
+              icon={ReceiptIndianRupee}
+              title="FREE"
+              description="This application is made by a student for students, and is completely free to use."
             />
           </div>
         </div>

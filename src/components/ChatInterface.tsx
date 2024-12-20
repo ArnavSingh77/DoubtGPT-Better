@@ -61,15 +61,16 @@ export const ChatInterface = ({ initialQuery
       if (image) {
         base64Image = await convertImageToBase64(image);
       }
+      const messageContent = !trimmedQuery && image ? "Analyze the image." : trimmedQuery;
       setMessages((prev) => [...prev, {
-        content: !trimmedQuery && image ? "Image uploaded" : trimmedQuery,
+        content: messageContent,
         isUser: true,
         image: base64Image
       }]);
       // Add user message to chat history with correct type
       const updatedHistory: Content[] = [
         ...chatHistory,
-        { role: "user", parts: [{ text: query }] }
+        { role: "user", parts: [{ text: messageContent }] }
       ];
       setChatHistory(updatedHistory);
 
@@ -94,7 +95,7 @@ export const ChatInterface = ({ initialQuery
               mimeType: image.type
             }
           },
-          query || "Please analyze this image"
+          messageContent // Use the determined message content
         ]);
       } else {
         result = await chat.sendMessage(query);
@@ -140,13 +141,13 @@ export const ChatInterface = ({ initialQuery
 
   return (
     <div
-      className={`w-full max-w-4xl mx-auto transition-all duration-500 ease-in-out ${isVisible ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}`}
+      className={`chat-interface w-full max-w-4xl mx-auto transition-all duration-500 ease-in-out ${isVisible ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}`}
       onDragOver={handleDragOver}
       onDrop={handleDrop}
       ref={chatInterfaceRef}
     >
-      <div className="bg-card rounded-2xl shadow-lg p-6 min-h-[600px] flex flex-col">
-        <div className="flex-1 overflow-y-auto mb-4 space-y-4">
+      <div className="bg-card rounded-2xl shadow-lg p-4 min-h-[500px] flex flex-col">
+        <div className="flex-1 overflow-y-auto space-y-2 pt-4">
           {messages.map((message, index) => (
             <ChatMessage
               key={index}
@@ -156,13 +157,13 @@ export const ChatInterface = ({ initialQuery
             />
           ))}
           {isLoading && (
-            <div className="flex justify-center">
+            <div className="flex justify-center py-4">
               <Loader2 className="h-6 w-6 animate-spin text-primary" />
             </div>
           )}
         </div>
-        <div className="mt-auto">
-          <SearchBar onSubmit={handleSendMessage} />
+        <div className="mt-6">
+          <SearchBar onSubmit={handleSendMessage} handleSendMessage={handleSendMessage} />
         </div>
       </div>
     </div>

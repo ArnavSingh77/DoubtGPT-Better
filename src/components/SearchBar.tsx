@@ -6,9 +6,10 @@ import { useState } from "react";
 interface SearchBarProps {
   onSubmit?: (query: string, image?: File) => void;
   setIsChatVisible?: (isVisible: boolean) => void;
+  handleSendMessage?: (query: string, image?: File) => void;
 }
 
-export const SearchBar = ({ onSubmit, setIsChatVisible }: SearchBarProps) => {
+export const SearchBar = ({ onSubmit, setIsChatVisible, handleSendMessage }: SearchBarProps) => {
   const [query, setQuery] = useState("");
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
 
@@ -17,7 +18,7 @@ export const SearchBar = ({ onSubmit, setIsChatVisible }: SearchBarProps) => {
     if ((query.trim() || selectedImage) && onSubmit) {
       if (setIsChatVisible) {
           setIsChatVisible(true);
-}
+      }
       onSubmit(query, selectedImage || undefined);
       setQuery("");
       setSelectedImage(null);
@@ -30,8 +31,22 @@ export const SearchBar = ({ onSubmit, setIsChatVisible }: SearchBarProps) => {
     }
   };
 
+  const handleDragOver = (event: React.DragEvent<HTMLFormElement>) => {
+    event.preventDefault();
+  };
+
+  const handleDrop = (event: React.DragEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (event.dataTransfer.files && event.dataTransfer.files.length > 0) {
+      const file = event.dataTransfer.files[0];
+      if (file.type.startsWith('image/')) {
+        setSelectedImage(file);
+      }
+    }
+  };
+
   return (
-    <form onSubmit={handleSubmit} className="relative w-full">
+    <form onSubmit={handleSubmit} className="relative w-full" onDragOver={handleDragOver} onDrop={handleDrop}>
       <div className="relative flex items-center">
         <Input
           type="text"
