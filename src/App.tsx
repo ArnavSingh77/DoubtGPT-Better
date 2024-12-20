@@ -6,6 +6,12 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import { useEffect } from "react";
 
+declare global {
+  interface Window {
+    dataLayer: any[];
+  }
+}
+
 const queryClient = new QueryClient();
 
 const App = () => {
@@ -18,8 +24,8 @@ const App = () => {
 
     script.onload = () => {
       window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        window.dataLayer.push(arguments);
+      function gtag(...args: any[]) {
+        window.dataLayer.push(args);
       }
       gtag("js", new Date());
       gtag("config", "G-KHMQFKMXQX");
