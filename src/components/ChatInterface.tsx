@@ -42,11 +42,16 @@ export const ChatInterface = ({ initialQuery }: ChatInterfaceProps) => {
     try {
       setIsLoading(true);
 
+      let base64Image: string | undefined;
+      if (image) {
+        base64Image = await convertImageToBase64(image);
+      }
+
       // Create user message with image if present
       const userMessage: Message = {
         content: query || "Image analysis request",
         isUser: true,
-        image: image ? URL.createObjectURL(image) : undefined
+        image: base64Image
       };
       setMessages(prev => [...prev, userMessage]);
 
@@ -65,11 +70,11 @@ export const ChatInterface = ({ initialQuery }: ChatInterfaceProps) => {
 
       let result;
       if (image) {
-        const base64Image = await convertImageToBase64(image);
+        const imageData = base64Image!.split(',')[1];
         result = await model.generateContent([
           {
             inlineData: {
-              data: base64Image.split(',')[1],
+              data: imageData,
               mimeType: image.type
             }
           },
