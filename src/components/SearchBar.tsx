@@ -15,8 +15,8 @@ export const SearchBar = ({ onSubmit, setIsChatVisible, handleSendMessage }: Sea
   const [query, setQuery] = useState("");
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [isRecording, setIsRecording] = useState(false);
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const { toast } = useToast();
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,59 +36,45 @@ export const SearchBar = ({ onSubmit, setIsChatVisible, handleSendMessage }: Sea
     }
   };
 
-  const startRecording = async () => {
+  const startRecording = () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream);
-      mediaRecorderRef.current = mediaRecorder;
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        throw new Error('Speech recognition not supported in this browser');
+      }
+
+      const recognition = new SpeechRecognition();
+      recognitionRef.current = recognition;
       
-      const audioChunks: BlobPart[] = [];
-      
-      mediaRecorder.ondataavailable = (event) => {
-        audioChunks.push(event.data);
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.lang = 'en-US';
+
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        setQuery(transcript);
+        
+        toast({
+          title: "Voice input received",
+          description: "Your speech has been converted to text!",
+        });
       };
 
-      mediaRecorder.onstop = async () => {
-        const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
-        try {
-          const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
-            method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${process.env.VITE_OPENAI_API_KEY}`,
-            },
-            body: (() => {
-              const formData = new FormData();
-              formData.append('file', audioBlob, 'audio.wav');
-              formData.append('model', 'whisper-1');
-              return formData;
-            })(),
-          });
-
-          if (!response.ok) {
-            throw new Error('Failed to transcribe audio');
-          }
-
-          const data = await response.json();
-          setQuery(data.text);
-          
-          toast({
-            title: "Voice input received",
-            description: "Your speech has been converted to text!",
-          });
-        } catch (error) {
-          console.error('Error transcribing audio:', error);
-          toast({
-            title: "Error",
-            description: "Failed to process voice input. Please try again.",
-            variant: "destructive",
-          });
-        }
-
-        // Stop all tracks
-        stream.getTracks().forEach(track => track.stop());
+      recognition.onerror = (event) => {
+        console.error('Speech recognition error:', event.error);
+        toast({
+          title: "Error",
+          description: "Failed to process voice input. Please try again.",
+          variant: "destructive",
+        });
+        setIsRecording(false);
       };
 
-      mediaRecorder.start();
+      recognition.onend = () => {
+        setIsRecording(false);
+      };
+
+      recognition.start();
       setIsRecording(true);
       
       toast({
@@ -99,15 +85,15 @@ export const SearchBar = ({ onSubmit, setIsChatVisible, handleSendMessage }: Sea
       console.error('Error accessing microphone:', error);
       toast({
         title: "Error",
-        description: "Could not access microphone. Please check your permissions.",
+        description: "Speech recognition not supported in this browser.",
         variant: "destructive",
       });
     }
   };
 
   const stopRecording = () => {
-    if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
-      mediaRecorderRef.current.stop();
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
       setIsRecording(false);
     }
   };
