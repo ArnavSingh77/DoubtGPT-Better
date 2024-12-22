@@ -5,6 +5,7 @@ import rehypeKatex from 'rehype-katex';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 import 'katex/dist/katex.min.css';
+import { VideoSolution } from "./VideoSolution";
 
 interface ChatMessageProps {
   content: string;
@@ -34,13 +35,16 @@ export const ChatMessage = ({ content, isUser, image }: ChatMessageProps) => {
         {isUser ? (
           content
         ) : (
-          <ReactMarkdown
-            remarkPlugins={[remarkMath, remarkGfm]}
-            rehypePlugins={[rehypeKatex, rehypeRaw]}
-            className="prose prose-sm max-w-none prose-pre:bg-secondary/50 prose-pre:text-secondary-foreground"
-          >
-            {content}
-          </ReactMarkdown>
+          <>
+            <ReactMarkdown
+              remarkPlugins={[remarkMath, remarkGfm]}
+              rehypePlugins={[rehypeKatex, rehypeRaw]}
+              className="prose prose-sm max-w-none prose-pre:bg-secondary/50 prose-pre:text-secondary-foreground"
+            >
+              {content}
+            </ReactMarkdown>
+            <VideoSolution text={content} />
+          </>
         )}
       </div>
     </div>
