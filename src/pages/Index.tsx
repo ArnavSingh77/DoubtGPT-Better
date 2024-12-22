@@ -4,6 +4,14 @@ import { ChatInterface } from "./../components/ChatInterface";
 import { SearchBar } from "./../components/SearchBar";
 import { FeatureCard } from "./../components/FeatureCard";
 import { StatCard } from "./../components/StatCard";
+import Meteors from "./../components/ui/meteors";
+import { BorderBeam } from "./../components/ui/border-beam";
+import MorphingText from "@/components/magicui/morphing-text";
+const texts = [
+  "Hello",
+  "DoubtGPT",
+];
+
 
 const Index = () => {
   const [isChatVisible, setIsChatVisible] = useState(false);
@@ -18,11 +26,12 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-secondary to-background">
+    <div className="min-h-screen bg-gradient-to-br from-background via-secondary bg-background md:shadow-xl">
+      <Meteors number={30} />
       <div className="container px-4 py-12">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-5xl font-bold mb-4">DoubtGPT</h1>
+          <MorphingText texts={texts} />
           <p className="text-xl text-muted-foreground">
             Padhlo chahe kahin se, doubts poocho yahin se.
           </p>
@@ -57,6 +66,7 @@ const Index = () => {
               title="Smart Solutions"
               description="Get detailed, step-by-step solutions to complex academic problems across various subjects."
             />
+            
           </div>
           <div className="animate-fade-in" style={{ animationDelay: "0.4s" }}>
             <FeatureCard
@@ -68,10 +78,11 @@ const Index = () => {
           <div className="animate-fade-in" style={{ animationDelay: "0.6s" }}>
             <FeatureCard
               icon={ReceiptIndianRupee}
-              title="FREE"
+              title="100% FREE"
               description="This application is made by a student for students, and is completely free to use."
             />
           </div>
+          
         </div>
 
         {/* Stats Section with glass morphism effect */}
@@ -82,6 +93,7 @@ const Index = () => {
             <StatCard value="20+" label="Subjects Covered" />
             <StatCard value="90%" label="Accuracy Rate" />
           </div>
+          <BorderBeam size={250} duration={12} delay={0} />
         </div>
       </div>
     </div>

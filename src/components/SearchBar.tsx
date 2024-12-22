@@ -2,6 +2,7 @@ import { Search, Image } from "lucide-react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { useState } from "react";
+import { CoolMode } from "./ui/cool-mode";
 
 interface SearchBarProps {
   onSubmit?: (query: string, image?: File) => void;
@@ -63,6 +64,7 @@ export const SearchBar = ({ onSubmit, setIsChatVisible, handleSendMessage }: Sea
             accept="image/*"
             onChange={handleImageUpload}
           />
+           <CoolMode>
           <Button
             type="button"
             variant="ghost"
@@ -72,9 +74,12 @@ export const SearchBar = ({ onSubmit, setIsChatVisible, handleSendMessage }: Sea
           >
             <Image className="h-5 w-5" />
           </Button>
+          </CoolMode>
+          <CoolMode>
           <Button type="submit" className="px-6">
             <Search className="h-5 w-5" />
           </Button>
+          </CoolMode>
         </div>
       </div>
       {selectedImage && (
