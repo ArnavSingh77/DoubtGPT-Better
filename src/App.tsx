@@ -30,6 +30,13 @@ const App = () => {
       gtag("js", new Date());
       gtag("config", "G-KHMQFKMXQX");
     };
+
+    // GoatCounter script
+    const goatScript = document.createElement("script");
+    goatScript.src = "//gc.zgo.at/count.js";
+    goatScript.async = true;
+    goatScript.setAttribute("data-goatcounter", "https://arnav1031.goatcounter.com/count");
+    document.head.appendChild(goatScript);
   }, []);
 
   return (
