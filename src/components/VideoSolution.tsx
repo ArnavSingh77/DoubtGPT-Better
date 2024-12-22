@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Button } from './ui/button';
 import { Loader2, Video } from 'lucide-react';
 import { useToast } from './ui/use-toast';
@@ -10,29 +10,46 @@ interface VideoSolutionProps {
 export const VideoSolution = ({ text }: VideoSolutionProps) => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const { toast } = useToast();
 
   const generateVideo = async () => {
     setIsGenerating(true);
     try {
-      // Create a new SpeechSynthesisUtterance
-      const utterance = new SpeechSynthesisUtterance(text);
-      
-      // Create an audio context
-      const audioContext = new AudioContext();
-      const mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(mediaStream);
-      const audioChunks: BlobPart[] = [];
+      const canvas = canvasRef.current;
+      if (!canvas) return;
 
-      // Record the speech
-      mediaRecorder.ondataavailable = (event) => {
-        audioChunks.push(event.data);
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      // Set canvas size
+      canvas.width = 640;
+      canvas.height = 360;
+
+      // Setup canvas recording
+      const stream = canvas.captureStream(30); // 30 FPS
+      const audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const combinedStream = new MediaStream([
+        ...stream.getTracks(),
+        ...audioStream.getTracks()
+      ]);
+
+      const chunks: BlobPart[] = [];
+      mediaRecorderRef.current = new MediaRecorder(combinedStream, {
+        mimeType: 'video/webm;codecs=vp8,opus'
+      });
+
+      mediaRecorderRef.current.ondataavailable = (e) => {
+        if (e.data.size > 0) {
+          chunks.push(e.data);
+        }
       };
 
-      mediaRecorder.onstop = async () => {
-        const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
-        const audioUrl = URL.createObjectURL(audioBlob);
-        setVideoUrl(audioUrl);
+      mediaRecorderRef.current.onstop = () => {
+        const blob = new Blob(chunks, { type: 'video/webm' });
+        const url = URL.createObjectURL(blob);
+        setVideoUrl(url);
         setIsGenerating(false);
         toast({
           title: "Video Generated",
@@ -40,14 +57,70 @@ export const VideoSolution = ({ text }: VideoSolutionProps) => {
         });
       };
 
-      // Start recording and speaking
-      mediaRecorder.start();
-      window.speechSynthesis.speak(utterance);
+      // Start recording
+      mediaRecorderRef.current.start();
 
+      // Create text-to-speech
+      const utterance = new SpeechSynthesisUtterance(text);
+      
+      // Animation function
+      let currentLine = 0;
+      const lines = text.split('. ').filter(line => line.trim());
+      const wordsPerLine = 5;
+      const lineHeight = 30;
+
+      function animate() {
+        if (!ctx || currentLine >= lines.length) return;
+
+        // Clear canvas
+        ctx.fillStyle = '#1a1a1a';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Add gradient background
+        const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+        gradient.addColorStop(0, '#2a2a2a');
+        gradient.addColorStop(1, '#1a1a1a');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Draw text
+        ctx.font = '20px Arial';
+        ctx.fillStyle = '#ffffff';
+        ctx.textAlign = 'center';
+
+        const words = lines[currentLine].split(' ');
+        for (let i = 0; i < words.length; i += wordsPerLine) {
+          const lineText = words.slice(i, i + wordsPerLine).join(' ');
+          ctx.fillText(
+            lineText,
+            canvas.width / 2,
+            canvas.height / 2 + (Math.floor(i / wordsPerLine) * lineHeight)
+          );
+        }
+
+        requestAnimationFrame(animate);
+      }
+
+      // Start animation
+      animate();
+
+      // Handle speech events
       utterance.onend = () => {
-        mediaRecorder.stop();
-        mediaStream.getTracks().forEach(track => track.stop());
+        if (mediaRecorderRef.current) {
+          mediaRecorderRef.current.stop();
+          combinedStream.getTracks().forEach(track => track.stop());
+        }
       };
+
+      utterance.onboundary = (event) => {
+        if (event.charIndex) {
+          const spokenText = text.substring(0, event.charIndex);
+          currentLine = spokenText.split('. ').length - 1;
+        }
+      };
+
+      // Start speaking
+      window.speechSynthesis.speak(utterance);
 
     } catch (error) {
       console.error('Error generating video:', error);
@@ -62,6 +135,10 @@ export const VideoSolution = ({ text }: VideoSolutionProps) => {
 
   return (
     <div className="mt-4">
+      <canvas 
+        ref={canvasRef} 
+        className="hidden"
+      />
       {!videoUrl ? (
         <Button 
           onClick={generateVideo} 
@@ -82,7 +159,7 @@ export const VideoSolution = ({ text }: VideoSolutionProps) => {
         </Button>
       ) : (
         <div className="mt-4">
-          <audio controls src={videoUrl} className="w-full" />
+          <video controls src={videoUrl} className="w-full rounded-lg shadow-lg" />
         </div>
       )}
     </div>
