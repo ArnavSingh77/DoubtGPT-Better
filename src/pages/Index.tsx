@@ -26,7 +26,7 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-secondary bg-background md:shadow-xl">
+    <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-background via-secondary bg-background md:shadow-xl">
       <Meteors number={30} />
       <div className="container px-4 py-12">
         {/* Header */}
@@ -69,7 +69,7 @@ const Index = () => {
             <Button
               className="group relative overflow-hidden rounded-full px-6 py-2 transition-all duration-300 
               hover:shadow-xl shadow-lg bg-gradient-to-r from-pink-100 via-purple-100 to-indigo-100 
-              hover:shadow-purple-100/50 animate-pulse hover:animate-none text-purple-800"
+              hover:shadow-purple-100/50 text-purple-800"
             >
               <PartyPopper className="mr-2 h-5 w-5 inline-block" />
               <span>Meet the Creator</span>
