@@ -35,20 +35,6 @@ const Index = () => {
           <p className="text-xl text-muted-foreground">
             Padhlo chahe kahin se, doubts poocho yahin se.
           </p>
-          <a 
-            href="https://github.com/arnav1031" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="inline-block mt-6"
-          >
-            <Button
-              className="group relative overflow-hidden rounded-full px-6 py-2 transition-all duration-300 hover:shadow-lg bg-gradient-to-r from-pink-100 via-purple-100 to-indigo-100 hover:shadow-purple-100/50"
-            >
-              <PartyPopper className="mr-2 h-5 w-5 inline-block" />
-              <span>Meet the Creator</span>
-              <span className="ml-2 inline-block transition-transform group-hover:translate-x-1">→</span>
-            </Button>
-          </a>
         </div>
 
         {/* Search/Chat Section with smooth transitions */}
@@ -70,6 +56,26 @@ const Index = () => {
           `}
         >
           <SearchBar onSubmit={handleSearchSubmit} setIsChatVisible={setIsChatVisible} />
+        </div>
+
+        {/* Meet the Creator Button */}
+        <div className="flex justify-center mt-8">
+          <a 
+            href="https://github.com/arnav1031" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="inline-block"
+          >
+            <Button
+              className="group relative overflow-hidden rounded-full px-6 py-2 transition-all duration-300 
+              hover:shadow-xl shadow-lg bg-gradient-to-r from-pink-100 via-purple-100 to-indigo-100 
+              hover:shadow-purple-100/50 animate-pulse hover:animate-none text-purple-800"
+            >
+              <PartyPopper className="mr-2 h-5 w-5 inline-block" />
+              <span>Meet the Creator</span>
+              <span className="ml-2 inline-block transition-transform group-hover:translate-x-1">→</span>
+            </Button>
+          </a>
         </div>
 
         {/* Features Section with hover effects */}
