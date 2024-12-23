@@ -25,11 +25,7 @@ const convertImageToBase64 = (file: File): Promise<string> => {
   });
 };
 
-export const ChatInterface = ({ initialQuery
-  ,
-   
-  initialImage 
-  }: ChatInterfaceProps) => {
+export const ChatInterface = ({ initialQuery, initialImage }: ChatInterfaceProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
@@ -43,6 +39,22 @@ export const ChatInterface = ({ initialQuery
     if (initialQuery || initialImage) {
       handleInitialMessage();
     }
+    // Add paste event listener
+    const handlePaste = async (e: ClipboardEvent) => {
+      const items = e.clipboardData?.items;
+      if (!items) return;
+      for (const item of Array.from(items)) {
+        if (item.type.indexOf('image') !== -1) {
+          const file = item.getAsFile();
+          if (file) {
+            handleSendMessage("", file);
+            break;
+          }
+        }
+      }
+    };
+    document.addEventListener('paste', handlePaste);
+    return () => document.removeEventListener('paste', handlePaste);
   }, []);
   const handleInitialMessage = async () => {
     if (initialImage) {
@@ -120,10 +132,16 @@ export const ChatInterface = ({ initialQuery
 
   const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
+    event.currentTarget.style.opacity = "0.7";
+  };
+  const handleDragLeave = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    event.currentTarget.style.opacity = "1";
   };
 
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
+    event.currentTarget.style.opacity = "1";
     if (event.dataTransfer.files && event.dataTransfer.files.length > 0) {
       const file = event.dataTransfer.files[0];
       if (file.type.startsWith('image/')) {
@@ -143,6 +161,7 @@ export const ChatInterface = ({ initialQuery
     <div
       className={`chat-interface w-full max-w-4xl mx-auto transition-all duration-500 ease-in-out ${isVisible ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}`}
       onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
       onDrop={handleDrop}
       ref={chatInterfaceRef}
     >

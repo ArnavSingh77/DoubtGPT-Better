@@ -1,5 +1,5 @@
 import { Brain, Clock, CheckCircle, ReceiptIndianRupee } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ChatInterface } from "./../components/ChatInterface";
 import { SearchBar } from "./../components/SearchBar";
 import { FeatureCard } from "./../components/FeatureCard";
@@ -24,6 +24,66 @@ const Index = () => {
     setInitialQuery(query);
     setInitialImage(image);
   };
+
+  useEffect(() => {
+    const handleDragOver = (event: DragEvent) => {
+      event.preventDefault();
+    };
+
+    const handleDrop = (event: DragEvent) => {
+      event.preventDefault();
+      const searchBar = document.querySelector('.search-container');
+      if (searchBar && event.target instanceof Node && searchBar.contains(event.target)) {
+        return;
+      }
+      const files = event.dataTransfer?.files;
+      if (files && files.length > 0) {
+        const imageFile = files[0];
+        if (imageFile.type.startsWith('image/')) {
+          handleSearchSubmit("", imageFile);
+        }
+      }
+    };
+
+    const handlePaste = async (event: ClipboardEvent) => {
+        const items = Array.from(event.clipboardData?.items || []);
+        for (const item of items) {
+            if (item.type.startsWith('image/')) {
+                event.preventDefault();
+                const blob = await new Promise<Blob | null>((resolve) => {
+                  item.getAsString(async (data) => {
+                    if (data) {
+                      const byteString = atob(data.split(',')[1]);
+                      const mimeString = data.split(',')[0].split(':')[1].split(';')[0];
+                      const ab = new ArrayBuffer(byteString.length);
+                      const ia = new Uint8Array(ab);
+                      for (let i = 0; i < byteString.length; i++) {
+                          ia[i] = byteString.charCodeAt(i);
+                      }
+                      resolve(new Blob([ab], { type: mimeString }));
+                    } else {
+                      resolve(null);
+                    }
+                  });
+                });
+                if (blob) {
+                  handleSearchSubmit("", blob as File);
+                }
+                return;
+            }
+        }
+    };
+
+    document.addEventListener('dragover', handleDragOver);
+    document.addEventListener('drop', handleDrop);
+    document.addEventListener('paste', handlePaste);
+
+    return () => {
+      document.removeEventListener('dragover', handleDragOver);
+      document.removeEventListener('drop', handleDrop);
+      document.removeEventListener('paste', handlePaste);
+    };
+  }, []);
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-background via-secondary bg-background md:shadow-xl">
