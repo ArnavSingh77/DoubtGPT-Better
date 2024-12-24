@@ -4,7 +4,6 @@ import { SearchBar } from "./SearchBar";
 import { ChatMessage } from "./ChatMessage";
 import { Loader2 } from "lucide-react";
 import { useToast } from "./ui/use-toast";
-import { supabase } from "@/integrations/supabase/client";
 
 interface Message {
   content: string;
@@ -34,64 +33,7 @@ export const ChatInterface = ({ initialQuery, initialImage }: ChatInterfaceProps
   const [chatHistory, setChatHistory] = useState<Content[]>([]);
   const [draggedImage, setDraggedImage] = useState<File | null>(null);
   const chatInterfaceRef = useRef<HTMLDivElement>(null);
-  const [session, setSession] = useState<any>(null);
-  
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      if (session) {
-        loadChatHistory();
-      }
-    });
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      if (session) {
-        loadChatHistory();
-      }
-    });
-    return () => subscription.unsubscribe();
-  }, []);
-  const loadChatHistory = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('chat_history')
-        .select('*')
-        .order('created_at', { ascending: true });
-      if (error) throw error;
-      if (data) {
-        setMessages(data.map(msg => ({
-          content: msg.content,
-          isUser: msg.is_user,
-          image: msg.image_url
-        })));
-      }
-    } catch (error) {
-      console.error('Error loading chat history:', error);
-    }
-  };
-  const saveChatMessage = async (content: string, isUser: boolean, imageUrl?: string) => {
-    if (!session?.user) return;
-    try {
-      const { error } = await supabase
-        .from('chat_history')
-        .insert({
-          user_id: session.user.id,
-          content,
-          is_user: isUser,
-          image_url: imageUrl
-        });
-      if (error) throw error;
-    } catch (error) {
-      console.error('Error saving chat message:', error);
-      toast({
-        title: "Error",
-        description: "Failed to save message to history.",
-        variant: "destructive",
-      });
-    }
-  };
+
   useEffect(() => {
     setTimeout(() => setIsVisible(true), 100);
     if (initialQuery || initialImage) {
@@ -137,11 +79,7 @@ export const ChatInterface = ({ initialQuery, initialImage }: ChatInterfaceProps
         isUser: true,
         image: base64Image
       }]);
-       // Save user message if logged in
-       if (session?.user) {
-        await saveChatMessage(messageContent, true, base64Image);
-      }
-      // Add user message to chat history
+      // Add user message to chat history with correct type
       const updatedHistory: Content[] = [
         ...chatHistory,
         { role: "user", parts: [{ text: messageContent }] }
@@ -172,10 +110,6 @@ export const ChatInterface = ({ initialQuery, initialImage }: ChatInterfaceProps
           messageContent // Use the determined message content
         ]);
       } else {
-        const chat = model.startChat({
-          history: chatHistory,
-          generationConfig: {},
-        });
         result = await chat.sendMessage(query);
       }
 
@@ -184,10 +118,6 @@ export const ChatInterface = ({ initialQuery, initialImage }: ChatInterfaceProps
       // Add assistant response to chat history with correct role
       setChatHistory([...updatedHistory, { role: "model", parts: [{ text }] }]);
       setMessages((prev) => [...prev, { content: text, isUser: false }]);
-      // Save AI response if logged in
-      if (session?.user) {
-        await saveChatMessage(text, false);
-      }
     } catch (error) {
       console.error("Error generating response:", error);
       toast({
