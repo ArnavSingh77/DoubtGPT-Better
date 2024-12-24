@@ -9,6 +9,7 @@ import { BorderBeam } from "./../components/ui/border-beam";
 import MorphingText from "@/components/magicui/morphing-text";
 import { Button } from "@/components/ui/button";
 import { PartyPopper } from "lucide-react";
+import { AuthButton } from "@/components/AuthButton";
 
 const texts = [
   "Hello",
@@ -88,6 +89,7 @@ const Index = () => {
   return (
     <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-background via-secondary bg-background md:shadow-xl">
       <Meteors number={30} />
+      <AuthButton />
       <div className="container px-4 py-12">
         {/* Header */}
         <div className="text-center mb-8">
