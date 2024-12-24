@@ -24,6 +24,7 @@ const Index = () => {
   const handleSearchSubmit = (query: string, image?: File) => {
     setInitialQuery(query);
     setInitialImage(image);
+    setIsChatVisible(true); // Make sure to show the chat interface when submitting
   };
 
   useEffect(() => {
@@ -103,12 +104,12 @@ const Index = () => {
         <div 
           className={`
             transition-all duration-500 ease-in-out transform
-            ${isChatVisible ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}
+            ${isChatVisible ? 'scale-100 opacity-100' : 'scale-95 opacity-0 hidden'}
           `}
         >
-          {isChatVisible ? (
+          {isChatVisible && (
             <ChatInterface initialQuery={initialQuery} initialImage={initialImage} />
-          ) : null}
+          )}
         </div>
 
         <div 
@@ -148,7 +149,6 @@ const Index = () => {
               title="Smart Solutions"
               description="Get detailed, step-by-step solutions to complex academic problems across various subjects."
             />
-            
           </div>
           <div className="animate-fade-in" style={{ animationDelay: "0.4s" }}>
             <FeatureCard
@@ -164,7 +164,6 @@ const Index = () => {
               description="This application is made by a student for students, and is completely free to use."
             />
           </div>
-          
         </div>
 
         {/* Stats Section with glass morphism effect */}
