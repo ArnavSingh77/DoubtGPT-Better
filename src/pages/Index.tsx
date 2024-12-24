@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { PartyPopper } from "lucide-react";
 
 const texts = [
-  "Hello",
+  "Hello,",
   "DoubtGPT",
 ];
 
