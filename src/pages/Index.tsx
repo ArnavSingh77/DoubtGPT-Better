@@ -121,7 +121,7 @@ const Index = () => {
         {/* Meet the Creator Button */}
         <div className="flex justify-center mt-8">
           <a 
-            href="https://github.com/arnav1031" 
+            href="https://bento.me/arnavsingh" 
             target="_blank" 
             rel="noopener noreferrer"
             className="inline-block"
