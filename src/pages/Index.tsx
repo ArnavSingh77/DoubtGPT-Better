@@ -9,10 +9,9 @@ import { BorderBeam } from "./../components/ui/border-beam";
 import MorphingText from "@/components/magicui/morphing-text";
 import { Button } from "@/components/ui/button";
 import { PartyPopper } from "lucide-react";
-import { AuthButton } from "@/components/AuthButton";
 
 const texts = [
-  "Hello",
+  "Hello,",
   "DoubtGPT",
 ];
 
@@ -89,7 +88,6 @@ const Index = () => {
   return (
     <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-background via-secondary bg-background md:shadow-xl">
       <Meteors number={30} />
-      <AuthButton />
       <div className="container px-4 py-12">
         {/* Header */}
         <div className="text-center mb-8">
@@ -145,16 +143,16 @@ const Index = () => {
           <div className="animate-fade-in" style={{ animationDelay: "0.2s" }}>
             <FeatureCard
               icon={Brain}
-              title="Smart Solutions"
-              description="Get detailed, step-by-step solutions to complex academic problems across various subjects."
+              title="AI Generated Solutions"
+              description="Get detailed, step-by-step solutions to complex academic problems."
             />
             
           </div>
           <div className="animate-fade-in" style={{ animationDelay: "0.4s" }}>
             <FeatureCard
-              icon={Clock}
-              title="24/7 Availability"
-              description="Access educational resources anytime, anywhere, with our always-available platform."
+              icon={CheckCircle}
+              title="Multiple Learning Formats"
+              description="Support for text, images, and formulas. Upload screenshots or type your questions in any format."
             />
           </div>
           <div className="animate-fade-in" style={{ animationDelay: "0.6s" }}>
@@ -170,10 +168,10 @@ const Index = () => {
         {/* Stats Section with glass morphism effect */}
         <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 shadow-xl border border-white/20 animate-fade-in" style={{ animationDelay: "0.8s" }}>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            <StatCard value="10K+" label="Questions Solved" />
-            <StatCard value="10K+" label="Happy Students" />
-            <StatCard value="20+" label="Subjects Covered" />
-            <StatCard value="90%" label="Accuracy Rate" />
+            <StatCard value="1K+" label="Questions Solved" />
+            <StatCard value="100+" label="Happy Students" />
+            <StatCard value="3+" label="Subjects Covered" />
+            <StatCard value="95%" label="Accuracy Rate" />
           </div>
           <BorderBeam size={250} duration={12} delay={0} />
         </div>
