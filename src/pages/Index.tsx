@@ -146,7 +146,6 @@ const Index = () => {
               title="AI Generated Solutions"
               description="Get detailed, step-by-step solutions to complex academic problems."
             />
-            
           </div>
           <div className="animate-fade-in" style={{ animationDelay: "0.4s" }}>
             <FeatureCard
@@ -162,12 +161,11 @@ const Index = () => {
               description="This application is made by a student for students, and is completely free to use."
             />
           </div>
-          
         </div>
 
-        {/* Stats Section with glass morphism effect */}
-        <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 shadow-xl border border-white/20 animate-fade-in" style={{ animationDelay: "0.8s" }}>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+        {/* Stats Section with updated styling */}
+        <div className="relative bg-white/5 backdrop-blur-lg rounded-3xl p-8 shadow-xl border border-white/20 animate-fade-in" style={{ animationDelay: "0.8s" }}>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <StatCard value="1K+" label="Questions Solved" />
             <StatCard value="100+" label="Happy Students" />
             <StatCard value="3+" label="Subjects Covered" />
