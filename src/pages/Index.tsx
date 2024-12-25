@@ -9,6 +9,7 @@ import { BorderBeam } from "./../components/ui/border-beam";
 import MorphingText from "@/components/magicui/morphing-text";
 import { Button } from "@/components/ui/button";
 import { PartyPopper } from "lucide-react";
+import { Footer } from "@/components/Footer";
 
 const texts = [
   "Hello,",
@@ -139,7 +140,7 @@ const Index = () => {
         </div>
 
         {/* Features Section with hover effects */}
-        <div className="grid md:grid-cols-3 gap-8 mb-16 mt-16">
+        <div className="grid md:grid-cols-3 gap-8 mb-8 mt-16">  {/* Changed mb-16 to mb-8 */}
           <div className="animate-fade-in" style={{ animationDelay: "0.2s" }}>
             <FeatureCard
               icon={Brain}
@@ -166,7 +167,7 @@ const Index = () => {
         </div>
 
         {/* Stats Section with glass morphism effect */}
-        <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 shadow-xl border border-white/20 animate-fade-in" style={{ animationDelay: "0.8s" }}>
+        <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 shadow-xl border border-white/20 animate-fade-in -mt-4" style={{ animationDelay: "0.8s" }}> {/* Added -mt-4 */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <StatCard value="1K+" label="Questions Solved" />
             <StatCard value="100+" label="Happy Students" />
@@ -176,6 +177,7 @@ const Index = () => {
           <BorderBeam size={250} duration={12} delay={0} />
         </div>
       </div>
+      <Footer />
     </div>
   );
 };
