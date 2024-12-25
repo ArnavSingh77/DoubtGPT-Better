@@ -147,7 +147,6 @@ const Index = () => {
               title="AI Generated Solutions"
               description="Get detailed, step-by-step solutions to complex academic problems."
             />
-            
           </div>
           <div className="animate-fade-in" style={{ animationDelay: "0.4s" }}>
             <FeatureCard
@@ -163,7 +162,6 @@ const Index = () => {
               description="This application is made by a student for students, and is completely free to use."
             />
           </div>
-          
         </div>
 
         {/* Stats Section with glass morphism effect */}
