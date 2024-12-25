@@ -140,7 +140,7 @@ const Index = () => {
         </div>
 
         {/* Features Section with hover effects */}
-        <div className="grid md:grid-cols-3 gap-8 mb-8 mt-16">  {/* Changed mb-16 to mb-8 */}
+        <div className="grid md:grid-cols-3 gap-8 mb-4 mt-16">  {/* Changed mb-8 to mb-4 */}
           <div className="animate-fade-in" style={{ animationDelay: "0.2s" }}>
             <FeatureCard
               icon={Brain}
@@ -165,17 +165,17 @@ const Index = () => {
         </div>
 
         {/* Stats Section with glass morphism effect */}
-        <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 shadow-xl border border-white/20 animate-fade-in -mt-4" style={{ animationDelay: "0.8s" }}> {/* Added -mt-4 */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            <StatCard value="1K+" label="Questions Solved" />
-            <StatCard value="100+" label="Happy Students" />
-            <StatCard value="3+" label="Subjects Covered" />
-            <StatCard value="95%" label="Accuracy Rate" />
-          </div>
-          <BorderBeam size={250} duration={12} delay={0} />
+        <div className="relative grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">  {/* Changed mb-16 to mb-8 */}
+          <StatCard value="1K+" label="Questions Solved" />
+          <StatCard value="100+" label="Happy Students" />
+          <StatCard value="3+" label="Subjects Covered" />
+          <StatCard value="95%" label="Accuracy Rate" />
+          <div className="absolute -inset-[200px] bg-gradient-to-r from-purple-500/30 via-indigo-500/20 to-purple-500/30 opacity-30 blur-3xl -z-10" />
         </div>
       </div>
-      <Footer />
+      <div className="-mt-8"> {/* Added negative margin to pull footer up */}
+        <Footer />
+      </div>
     </div>
   );
 };
